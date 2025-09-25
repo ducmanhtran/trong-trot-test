@@ -527,6 +527,203 @@ const menuEl = document.querySelector('#menu .menu');
     clearHighlights();
     taskListDiv.innerHTML = '';
   });
+  <!-- Dán phần này sau khi bạn đã có biến `map` (Leaflet) -->
+(function() {
+  // URL Google Sheets (bạn đã cung cấp)
+  const sheetUrl = "https://docs.google.com/spreadsheets/d/1-yfsz_JaKXEec14z3ng10q9UgA3BmVTntT5eUq1ItKo/gviz/tq?tqx=out:json";
+
+  // Layer groups theo hệ thống (he_thong)
+  const pipeGroups = {}; // { "Hệ thống A": L.layerGroup(), ... }
+  const allPipesGroup = L.layerGroup().addTo(map); // group tổng hợp
+
+  // Một số bảng màu cho he_thong (thêm/bổ sung tuỳ bạn)
+  const systemColors = {
+    "Tưới chính": "#1f77b4",
+    "Tưới nhánh": "#2ca02c",
+    "Thấp áp": "#ff7f0e",
+    "Đường cấp": "#9467bd"
+    // nếu thiếu: sẽ dùng màu mặc định
+  };
+
+  // mapping cho loai_ong -> kiểu nét
+  const materialStyle = {
+    "HDPE": { dashArray: null },   // liền
+    "Gang": { dashArray: "6,6" },  // nét đứt
+    "Bê tông": { dashArray: "1,6" }
+  };
+
+  // helper: parse google visualization JSON callback
+  function parseGviz(text) {
+    const match = text.match(/google\.visualization\.Query\.setResponse\((.*)\);/s);
+    if (!match) throw new Error("Không parse được response gviz");
+    return JSON.parse(match[1]).table.rows;
+  }
+
+  // helper: convert string like "[[lat,lon],[lat,lon],...]" to array of [lat, lon]
+  function coordsToLatLngs(coordsStr) {
+    if (!coordsStr) return [];
+    // some cells might already be JSON array, some might be a string with quotes.
+    let arr;
+    try {
+      arr = JSON.parse(coordsStr);
+    } catch (e) {
+      // cố gắng loại bỏ các dấu thừa rồi JSON.parse
+      try {
+        const cleaned = coordsStr.replace(/'/g, '"');
+        arr = JSON.parse(cleaned);
+      } catch (err) {
+        console.error("Không parse được toado_polyline:", coordsStr);
+        return [];
+      }
+    }
+    // Expect arr = [[lat, lon], ...]
+    // If your sheet actually stores [lon, lat] change order below
+    return arr.map(pt => L.latLng(Number(pt[0]), Number(pt[1])));
+  }
+
+  // helper: map diameter (mm) -> weight (px)
+  function diameterToWeight(mm) {
+    const d = Number(mm) || 50;
+    // scale hợp lý: ví dụ 20mm -> 1, 200mm -> 6
+    if (d <= 25) return 1;
+    if (d <= 50) return 2;
+    if (d <= 100) return 3;
+    if (d <= 150) return 4;
+    if (d <= 250) return 5;
+    return 6;
+  }
+
+  // draw function
+  function drawPipes(rows) {
+    // clear existing
+    allPipesGroup.clearLayers();
+    Object.values(pipeGroups).forEach(g => g.clearLayers());
+
+    rows.forEach(r => {
+      // r.c is array of cells; try to read by column name if available, else assume order
+      // vì Google Sheets có thể trả về c với các vị trí khác nhau, ta dùng index theo cấu trúc sheet
+      // Giả sử sheet cột theo thứ tự: id_tuyen | ten_duong | he_thong | loai_duong | loai_ong | duong_kinh_mm | toado_polyline
+      const cells = r.c || [];
+      const id_tuyen = cells[0]?.v ?? "";
+      const ten_duong = cells[1]?.v ?? "";
+      const he_thong = cells[2]?.v ?? "Khác";
+      const loai_duong = cells[3]?.v ?? "";
+      const loai_ong = cells[4]?.v ?? "";
+      const duong_kinh_mm = cells[5]?.v ?? "";
+      const toado_polyline = cells[6]?.v ?? "";
+
+      const latlngs = coordsToLatLngs(toado_polyline);
+      if (!latlngs || latlngs.length < 2) return; // bỏ nếu không đủ điểm
+
+      // ensure group exists
+      if (!pipeGroups[he_thong]) {
+        pipeGroups[he_thong] = L.layerGroup().addTo(map);
+      }
+
+      const color = systemColors[he_thong] || "#333333";
+      const weight = diameterToWeight(duong_kinh_mm);
+      const dash = (materialStyle[loai_ong] && materialStyle[loai_ong].dashArray) || null;
+
+      const poly = L.polyline(latlngs, {
+        color,
+        weight,
+        dashArray: dash,
+        opacity: 0.85,
+        lineCap: 'round'
+      });
+
+      const popupHtml = `
+        <b>${ten_duong || id_tuyen}</b><br/>
+        Hệ thống: ${he_thong}<br/>
+        Loại đường: ${loai_duong || 'N/A'}<br/>
+        Vật liệu ống: ${loai_ong || 'N/A'}<br/>
+        Đường kính: ${duong_kinh_mm ? duong_kinh_mm + ' mm' : 'N/A'}
+      `;
+      poly.bindPopup(popupHtml);
+
+      // add to groups
+      poly.addTo(pipeGroups[he_thong]);
+      poly.addTo(allPipesGroup);
+    });
+
+    // Fit bounds to all pipes if any
+    if (allPipesGroup.getLayers().length > 0) {
+      const bounds = allPipesGroup.getBounds();
+      if (bounds.isValid()) map.fitBounds(bounds.pad(0.1));
+    }
+
+    // update layer control (tạo / reset)
+    updateLayerControl();
+    updateLegend();
+  }
+
+  // Layer control (global variable to allow re-creation)
+  let layerControl = null;
+  function updateLayerControl() {
+    if (layerControl) {
+      map.removeControl(layerControl);
+      layerControl = null;
+    }
+    const overlays = {};
+    overlays["Tất cả ống"] = allPipesGroup;
+    Object.keys(pipeGroups).forEach(k => overlays[k] = pipeGroups[k]);
+    layerControl = L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(map);
+  }
+
+  // Simple legend
+  let legendControl = null;
+  function updateLegend() {
+    if (legendControl) map.removeControl(legendControl);
+    legendControl = L.control({ position: 'bottomleft' });
+    legendControl.onAdd = function() {
+      const div = L.DomUtil.create('div', 'pipe-legend');
+      div.style.background = 'rgba(255,255,255,0.95)';
+      div.style.padding = '8px';
+      div.style.borderRadius = '6px';
+      div.style.boxShadow = '0 1px 4px rgba(0,0,0,0.2)';
+      let html = '<b>Chú giải ống</b><br/>';
+      Object.keys(systemColors).forEach(k => {
+        html += `<div style="display:flex;align-items:center;margin:4px 0;">
+                   <span style="width:24px;height:6px;display:inline-block;background:${systemColors[k]};margin-right:8px;border-radius:3px"></span>
+                   <span>${k}</span>
+                 </div>`;
+      });
+      html += `<div style="margin-top:6px;font-size:12px;">
+                <i>Nét đứt = gang; liền = HDPE (mặc định)</i>
+               </div>`;
+      div.innerHTML = html;
+      return div;
+    };
+    legendControl.addTo(map);
+  }
+
+  // Main fetch
+  fetch(sheetUrl).then(r => r.text()).then(text => {
+    try {
+      const rows = parseGviz(text);
+      drawPipes(rows);
+    } catch (e) {
+      console.error("Lỗi khi xử lý sheet đường ống:", e);
+    }
+  }).catch(err => {
+    console.error("Lỗi fetch sheet đường ống:", err);
+  });
+
+  // Public API: nếu muốn gọi lại (ví dụ reload)
+  window.reloadPipesFromSheet = function(url) {
+    const u = url || sheetUrl;
+    fetch(u).then(r => r.text()).then(text => {
+      try {
+        const rows = parseGviz(text);
+        drawPipes(rows);
+      } catch (e) {
+        console.error("Lỗi parse reload:", e);
+      }
+    }).catch(err => console.error("Lỗi reload:", err));
+  };
+
+})();
+
 };
 </script>
 </body>
