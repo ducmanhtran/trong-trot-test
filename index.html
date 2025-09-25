@@ -143,7 +143,7 @@
     <li>
       <button aria-haspopup="true">🏗️ Hạ tầng ▾</button>
       <ul class="submenu">
-        <li><button class="final-item">💧 Hệ thống tưới</button></li>
+        <li><button id="btnIrrigation" class="final-item">💧 Hệ thống tưới</button></li>
         <li><button class="final-item">🚜 Máy móc</button></li>
       </ul>
     </li>
@@ -534,7 +534,7 @@ const menuEl = document.querySelector('#menu .menu');
 
   // Layer groups theo hệ thống (he_thong)
   const pipeGroups = {}; // { "Hệ thống A": L.layerGroup(), ... }
-  const allPipesGroup = L.layerGroup().addTo(map); // group tổng hợp
+  const allPipesGroup = L.layerGroup(); // group tổng hợp
 
   // Một số bảng màu cho he_thong (thêm/bổ sung tuỳ bạn)
   const systemColors = {
@@ -551,6 +551,17 @@ const menuEl = document.querySelector('#menu .menu');
     "Gang": { dashArray: "6,6" },  // nét đứt
     "Bê tông": { dashArray: "1,6" }
   };
+  function showIrrigation() {
+    if (!map.hasLayer(allPipesGroup)) {
+      map.addLayer(allPipesGroup);
+    }
+  }
+  
+  function hideIrrigation() {
+    if (map.hasLayer(allPipesGroup)) {
+      map.removeLayer(allPipesGroup);
+    }
+  }
 
   // helper: parse google visualization JSON callback
   function parseGviz(text) {
@@ -723,6 +734,29 @@ const menuEl = document.querySelector('#menu .menu');
   };
 
 })();
+// Nút hệ thống tưới: chỉ khi click mới bật
+document.getElementById('btnIrrigation').addEventListener('click', function () {
+    showIrrigation();
+
+    // Nếu đang ở mobile thì đóng menu
+    if (window.innerWidth <= 768) {
+        menuEl.classList.remove('show');
+        hamburgerBtn.setAttribute('aria-expanded', 'false');
+    }
+});
+
+// Các mục final-item khác: tắt hệ thống tưới
+document.querySelectorAll('#menu .final-item:not(#btnIrrigation)').forEach(subBtn => {
+    subBtn.addEventListener('click', function () {
+        hideIrrigation();
+
+        // Mobile: ẩn menu khi click item
+        if (window.innerWidth <= 768) {
+            menuEl.classList.remove('show');
+            hamburgerBtn.setAttribute('aria-expanded', 'false');
+        }
+    });
+});
 
 };
 </script>
