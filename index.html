@@ -621,9 +621,9 @@ const menuEl = document.querySelector('#menu .menu');
 
   function diameterToWeight(mm) {
     const d = Number(mm) || 50;
-    if (d <= 100) return 1;
-    if (d <= 160) return 2;
-    if (d <= 250) return 3;
+    if (d <= 100) return 2;
+    if (d <= 160) return 3;
+    if (d <= 250) return 4;
     return 6;
   }
 
