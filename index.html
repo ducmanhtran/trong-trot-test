@@ -239,7 +239,7 @@ window.onload = function () {
           }
           // áp style xám
           p.setStyle({
-            color: 'blue',       // viền xanh lam mỏng
+            color: 'gray',       // viền xanh lam mỏng
             weight: 0.5,
             fillColor: 'gray',
             fillOpacity: 0.6
@@ -621,11 +621,9 @@ const menuEl = document.querySelector('#menu .menu');
 
   function diameterToWeight(mm) {
     const d = Number(mm) || 50;
-    if (d <= 25) return 1;
-    if (d <= 50) return 2;
-    if (d <= 100) return 3;
-    if (d <= 160) return 4;
-    if (d <= 250) return 5;
+    if (d <= 100) return 1;
+    if (d <= 160) return 2;
+    if (d <= 250) return 3;
     return 6;
   }
 
