@@ -682,7 +682,13 @@ const menuEl = document.querySelector('#menu .menu');
     updateLayerControl();
     updateLegend();
   }
-
+  map.on('zoomend', function () {
+      if (map.getZoom() >= 15) {
+          if (!map.hasLayer(allPipesGroup)) map.addLayer(allPipesGroup);
+      } else {
+          if (map.hasLayer(allPipesGroup)) map.removeLayer(allPipesGroup);
+      }
+  });
   let layerControl = null;
   function updateLayerControl() {
     if (layerControl) {
