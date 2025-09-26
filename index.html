@@ -116,6 +116,14 @@
   color: blue !important;
   }
 /* Mặc định trên mọi thiết bị */
+.pipe-label {
+  font-weight: bold;
+  color: #0000ff;
+  background: rgba(255,255,255,0.7);
+  border: none;
+  box-shadow: none;
+  font-size: 12px;
+}
 
 }
 </style>
@@ -573,7 +581,7 @@ const menuEl = document.querySelector('#menu .menu');
 
   const pipeGroups = {};
   const allPipesGroup = L.layerGroup(); // ❗ KHÔNG .addTo(map) ở đây
-
+  const pipesLayer = L.layerGroup();
   const systemColors = {
     "Tưới chính": "#FF0000",
     "Tưới nhánh": "#1f77b4",
@@ -640,9 +648,8 @@ const menuEl = document.querySelector('#menu .menu');
       const loai_ong = cells[4]?.v ?? "";
       const duong_kinh_mm = cells[5]?.v ?? "";
       const toado_polyline = cells[6]?.v ?? "";
-
+      
       const latlngs = coordsToLatLngs(toado_polyline);
-      if (!latlngs || latlngs.length < 2) return;
 
       // ❗ Chỉ tạo group, không addTo(map)
       if (!pipeGroups[he_thong]) {
@@ -678,6 +685,89 @@ const menuEl = document.querySelector('#menu .menu');
       const bounds = allPipesGroup.getBounds();
       if (bounds.isValid()) map.fitBounds(bounds.pad(0.1));
     }
+function drawPipes(rows) {
+    allPipesGroup.clearLayers();
+    Object.values(pipeGroups).forEach(g => g.clearLayers());
+
+    rows.forEach(r => {
+      const cells = r.c || [];
+      const id_tuyen   = cells[0]?.v ?? "";
+      const ten_duong  = cells[1]?.v ?? "";
+      const he_thong   = cells[2]?.v ?? "Khác";
+      const loai_duong = cells[3]?.v ?? "";
+      const loai_ong   = cells[4]?.v ?? "";
+      const duong_kinh_mm = cells[5]?.v ?? "";
+      const toado_polyline = cells[6]?.v ?? "";
+      
+      const latlngs = coordsToLatLngs(toado_polyline);
+
+      // ❗ Chỉ tạo group, không addTo(map)
+      if (!pipeGroups[he_thong]) {
+        pipeGroups[he_thong] = L.layerGroup();
+      }
+
+      const color = systemColors[he_thong] || "#333333";
+      const weight = diameterToWeight(duong_kinh_mm);
+      const dash = (materialStyle[loai_ong] && materialStyle[loai_ong].dashArray) || null;
+
+      const poly = L.polyline(latlngs, {
+        color,
+        weight,
+        dashArray: dash,
+        opacity: 1,
+        lineCap: 'round'
+      });
+
+      const popupHtml = `
+        <b>${ten_duong || id_tuyen}</b><br/>
+        Hệ thống: ${he_thong}<br/>
+        Loại đường: ${loai_duong || 'N/A'}<br/>
+        Vật liệu ống: ${loai_ong || 'N/A'}<br/>
+        Đường kính: ${duong_kinh_mm ? duong_kinh_mm + ' mm' : 'N/A'}
+      `;
+      poly.bindPopup(popupHtml);
+
+      /* ✨ Thêm nhãn id_tuyen hiển thị khi zoom đủ lớn */
+      if (id_tuyen) {
+        // tạo tooltip permanent nhưng ban đầu chưa add vào map
+        poly.myTooltip = L.tooltip({
+          permanent: true,
+          direction: 'center',
+          className: 'pipe-label'
+        })
+        .setContent(id_tuyen)
+        .setLatLng(poly.getBounds().getCenter());
+        // ban đầu chưa add layer tooltip – chờ zoom
+      }
+
+      poly.addTo(pipeGroups[he_thong]);
+      poly.addTo(allPipesGroup);
+    });
+
+    if (allPipesGroup.getLayers().length > 0) {
+      const bounds = allPipesGroup.getBounds();
+      if (bounds.isValid()) map.fitBounds(bounds.pad(0.1));
+    }
+
+    updateLayerControl();
+    updateLegend();
+
+    /* ✨ Hiển thị / ẩn nhãn theo mức zoom */
+    const minZoomShowPipeLabel = 15;
+    map.off('zoomend.pipeLabel'); // tránh đăng ký nhiều lần khi gọi lại drawPipes
+    map.on('zoomend.pipeLabel', function() {
+      const z = map.getZoom();
+      allPipesGroup.eachLayer(function(layer) {
+        if (layer.myTooltip) {
+          if (z >= minZoomShowPipeLabel) {
+            if (!map.hasLayer(layer.myTooltip)) map.addLayer(layer.myTooltip);
+          } else {
+            if (map.hasLayer(layer.myTooltip)) map.removeLayer(layer.myTooltip);
+          }
+        }
+      });
+    });
+}
 
     updateLayerControl();
     updateLegend();
