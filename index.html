@@ -183,6 +183,8 @@ window.onload = function () {
   // state
   let rowsData = [];
   let polygons = [];
+  let colorHidden = false;          // trạng thái ẩn màu
+  let originalStyles = new Map();   // lưu style gốc của từng polygon
   let labelsVisible = false;
   let taskData = [];
   let highlightLayers = [];
@@ -216,6 +218,44 @@ window.onload = function () {
     return btn;
   };
   toggleBtn.addTo(map);
+  // toggle màu
+  const toggleColorBtn = L.control({ position: 'bottomright' });
+  toggleColorBtn.onAdd = function () {
+    const btn = L.DomUtil.create('button', 'toggle-labels-btn');
+    btn.innerHTML = '🎨 Ẩn màu';
+    btn.onclick = function () {
+      colorHidden = !colorHidden;
+  
+      polygons.forEach(p => {
+        if (colorHidden) {
+          // lưu style gốc nếu chưa có
+          if (!originalStyles.has(p)) {
+            originalStyles.set(p, {
+              color: p.options.color,
+              weight: p.options.weight,
+              fillColor: p.options.fillColor,
+              fillOpacity: p.options.fillOpacity
+            });
+          }
+          // áp style xám
+          p.setStyle({
+            color: 'blue',       // viền xanh lam mỏng
+            weight: 0.5,
+            fillColor: 'gray',
+            fillOpacity: 0.6
+          });
+        } else {
+          // khôi phục style gốc
+          const st = originalStyles.get(p);
+          if (st) p.setStyle(st);
+        }
+      });
+  
+      btn.innerHTML = colorHidden ? '🎨 Hiện màu' : '🎨 Ẩn màu';
+    };
+    return btn;
+  };
+  toggleColorBtn.addTo(map);
 
   // helpers parse
   function parseDate_fromSheet(str) {
