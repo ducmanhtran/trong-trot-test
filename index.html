@@ -61,8 +61,8 @@
 #footerTitle{position:fixed;bottom:0;left:0;width:100%;margin:0;padding:4px 6px;background:rgba(255,255,255,0.85);text-align:center;font-size:13px;box-shadow:0 -1px 4px rgba(0,0,0,0.15);z-index:1000}
 /* ===== LABEL & TOGGLE ===== */
 .custom-label{font-weight:200;font-size:13px;color:#000;text-align:center;white-space:nowrap}
-.toggle-labels-btn{background:#fff;border:1px solid #bbb;border-radius:6px;padding:6px 10px;font-size:14px;cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,0.15);margin-bottom:40px}
-.toggle-labels-btn:hover{background:#f0f0f0}
+.toggle-labels-btn, .toggle-color-btn{background:#fff;border:1px solid #bbb;border-radius:6px;padding:6px 10px;font-size:14px;cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,0.15);margin-bottom:40px}
+.toggle-labels-btn:hover, .toggle-color-btn:hover{background:#f0f0f0}
 #infoBox{position:fixed;bottom:40px;left:10px;background:rgba(255,255,255,0.9);border:1px solid #ccc;padding:8px 12px;font-size:14px;font-weight:bold;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,0.2);z-index:1200;display:none}
 /* ===== TASK PANEL ===== */
 #taskPanel{position:fixed;top:60px;right:10px;width:280px;background:rgba(255,255,255,0.95);border:1px solid #ccc;padding:10px;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,0.2);z-index:1200;display:none}
@@ -221,7 +221,7 @@ window.onload = function () {
   // toggle màu
   const toggleColorBtn = L.control({ position: 'bottomright' });
   toggleColorBtn.onAdd = function () {
-    const btn = L.DomUtil.create('button', 'toggle-labels-btn');
+    const btn = L.DomUtil.create('button', 'toggle-color-btn');
     btn.innerHTML = '🎨 Ẩn màu';
     btn.onclick = function () {
       colorHidden = !colorHidden;
