@@ -535,14 +535,15 @@ const menuEl = document.querySelector('#menu .menu');
   const allPipesGroup = L.layerGroup(); // ❗ KHÔNG .addTo(map) ở đây
 
   const systemColors = {
-    "Tưới chính": "#1f77b4",
-    "Tưới nhánh": "#2ca02c",
+    "Tưới chính": "#FF0000",
+    "Tưới nhánh": "#1f77b4",
+    "Tưới nhánh 1": "#2ca02c",
     "Thấp áp": "#ff7f0e",
     "Đường cấp": "#9467bd"
   };
 
   const materialStyle = {
-    "HDPE": { dashArray: null },
+    "u_PVC": { dashArray: null },
     "Gang": { dashArray: "6,6" },
     "Bê tông": { dashArray: "1,6" }
   };
@@ -583,7 +584,7 @@ const menuEl = document.querySelector('#menu .menu');
     if (d <= 25) return 1;
     if (d <= 50) return 2;
     if (d <= 100) return 3;
-    if (d <= 150) return 4;
+    if (d <= 160) return 4;
     if (d <= 250) return 5;
     return 6;
   }
@@ -618,7 +619,7 @@ const menuEl = document.querySelector('#menu .menu');
         color,
         weight,
         dashArray: dash,
-        opacity: 0.85,
+        opacity: 1,
         lineCap: 'round'
       });
 
