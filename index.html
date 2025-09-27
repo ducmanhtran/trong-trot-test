@@ -750,7 +750,7 @@ function drawPipes(rows) {
         L.polyline(coords, { color: 'blue' }).addTo(allPipesGroup);
 
         // === Vẽ chấm đỏ cho "Tưới nhánh 1" ===
-        if (row.id_tuyen === "Tưới nhánh 1") {
+        if (row.he_thong === "Tưới nhánh 1") {
             // Lấy chuỗi vị trí chuyển hướng từ cột 8
             const chuyenHuongStr = row[7]?.v ?? "";
             // Chuyển thành mảng số
