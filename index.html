@@ -594,6 +594,7 @@ const menuEl = document.querySelector('#menu .menu');
       map.removeControl(layerControl);
       layerControl = null;
     }
+    if (!show) return;
     const overlays = {};
     overlays["Tất cả ống"] = allPipesGroup;
     Object.keys(pipeGroups).forEach(k => overlays[k] = pipeGroups[k]);
@@ -603,6 +604,8 @@ const menuEl = document.querySelector('#menu .menu');
   let legendControl = null;
   function updateLegend(show = true) {
     if (legendControl) map.removeControl(legendControl);
+    legendControl = null;
+    if (!show) return;
     legendControl = L.control({ position: 'bottomleft' });
     legendControl.onAdd = function() {
       const div = L.DomUtil.create('div', 'pipe-legend');
