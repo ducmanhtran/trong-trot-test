@@ -651,10 +651,16 @@ const menuEl = document.querySelector('#menu .menu');
 
   // Bật/tắt lớp tưới
   function showIrrigation() {
-    if (!map.hasLayer(allPipesGroup)) map.addLayer(allPipesGroup);
+    if (!map.hasLayer(allPipesGroup)) {
+      map.addLayer(allPipesGroup);
+      map.addLayer(pebGroup);
+    }
   }
   function hideIrrigation() {
-    if (map.hasLayer(allPipesGroup)) map.removeLayer(allPipesGroup);
+    if (map.hasLayer(allPipesGroup)){
+      map.removeLayer(allPipesGroup);
+      map.removeLayer(pebGroup);
+    }
   }
 
   function parseGviz(text) {
@@ -743,7 +749,6 @@ function drawPipes(rows) {
       poly.bindPopup(popupHtml);
       poly.addTo(pipeGroups[he_thong]);
       poly.addTo(allPipesGroup);
-      pebGroup.addTo(map);
       // --- Vẽ chấm đỏ cho "Tưới nhánh 1" ---
       if (he_thong === "Tưới nhánh 1") {
           const chuyenHuongStr = cells[7]?.v ?? "";
