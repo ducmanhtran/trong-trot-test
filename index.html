@@ -670,16 +670,16 @@ function drawPipes(rows) {
           lineCap: 'round'
       }).addTo(irrigationGroup);
       const center = poly.getBounds().getCenter();
-      poly.myTooltip = L.tooltip({
-          permanent: true,           // tooltip gắn cố định
-          direction: 'center',
-          className: 'pipe-label',    // để dễ CSS
-          opacity: 0                  // BẮT ĐẦU ẨN
-      })
-      .setContent(id_tuyen)          // ⚠ hiển thị id_tuyen
-      .setLatLng(center);
-      irrigationGroup.addLayer(mytooltip);
-      map.addLayer(poly.myTooltip);
+      const tooltip = L.tooltip({
+              permanent:true,
+              direction:'center',
+              className:'pipe-label',
+              opacity:0   // ban đầu ẩn
+          })
+          .setContent(id_tuyen)
+          .setLatLng(poly.getBounds().getCenter());
+  
+          irrigationGroup.addLayer(tooltip);
 
       const popupHtml = `
         <b>${ten_duong || id_tuyen}</b><br/>
