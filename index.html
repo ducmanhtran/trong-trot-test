@@ -812,13 +812,11 @@ document.querySelectorAll('#menu .final-item:not(#btnIrrigation)').forEach(subBt
     subBtn.addEventListener('click', function () {
 
         // 👉 Chỉ tắt nếu đang bật
-        if (irrigationVisible) {
             map.removeLayer(irrigationGroup);   // ẩn toàn bộ tuyến ống + nhãn id_tuyen
             updateLegend(false);        // ẩn chú giải ống
             updateLayerControl(false);    // ẩn quản lý hiện thị ống
             hideIrrigation();
             irrigationVisible = false;          // cập nhật trạng thái
-        }
 
         // Đóng menu mobile như cũ
         if (window.innerWidth <= 768) {
