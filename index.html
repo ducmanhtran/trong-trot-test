@@ -116,15 +116,14 @@
   color: blue !important;
   }
 /* Mặc định trên mọi thiết bị */
-.pipe-label {
+}
+  .pipe-label {
   font-weight: bold;
   color: #0000ff;
   background: rgba(255,255,255,0.7);
   border: none;
   box-shadow: none;
   font-size: 12px;
-}
-
 }
 </style>
 </head>
@@ -637,7 +636,83 @@ const menuEl = document.querySelector('#menu .menu');
 
 function drawPipes(rows) {
     allPipesGroup.clearLayers();
+  function drawPipes(rows) {
+    allPipesGroup.clearLayers();
     Object.values(pipeGroups).forEach(g => g.clearLayers());
+
+    rows.forEach(r => {
+      const cells = r.c || [];
+      const id_tuyen   = cells[0]?.v ?? "";
+      const ten_duong  = cells[1]?.v ?? "";
+      const he_thong   = cells[2]?.v ?? "Khác";
+      const loai_duong = cells[3]?.v ?? "";
+      const loai_ong   = cells[4]?.v ?? "";
+      const duong_kinh_mm = cells[5]?.v ?? "";
+      const toado_polyline = cells[6]?.v ?? "";
+      
+      const latlngs = coordsToLatLngs(toado_polyline);
+
+      if (!pipeGroups[he_thong]) {
+        pipeGroups[he_thong] = L.layerGroup();
+      }
+
+      const color = systemColors[he_thong] || "#333333";
+      const weight = diameterToWeight(duong_kinh_mm);
+      const dash = (materialStyle[loai_ong] && materialStyle[loai_ong].dashArray) || null;
+
+      const poly = L.polyline(latlngs, {
+        color,
+        weight,
+        dashArray: dash,
+        opacity: 1,
+        lineCap: 'round'
+      });
+
+      const popupHtml = `
+        <b>${ten_duong || id_tuyen}</b><br/>
+        Hệ thống: ${he_thong}<br/>
+        Loại đường: ${loai_duong || 'N/A'}<br/>
+        Vật liệu ống: ${loai_ong || 'N/A'}<br/>
+        Đường kính: ${duong_kinh_mm ? duong_kinh_mm + ' mm' : 'N/A'}
+      `;
+      poly.bindPopup(popupHtml);
+
+      /* ✅ Gắn tooltip id_tuyen – ban đầu ẩn bằng setOpacity(0) */
+      if (id_tuyen) {
+        poly.bindTooltip(id_tuyen, {
+          permanent: true,
+          direction: 'center',
+          className: 'pipe-label'
+        });
+        // ẩn tooltip ngay từ đầu
+        poly.getTooltip().setOpacity(0);
+      }
+
+      poly.addTo(pipeGroups[he_thong]);
+      poly.addTo(allPipesGroup);
+    });
+
+    if (allPipesGroup.getLayers().length > 0) {
+      const bounds = allPipesGroup.getBounds();
+      if (bounds.isValid()) map.fitBounds(bounds.pad(0.1));
+    }
+
+    updateLayerControl();
+    updateLegend();
+
+    /* ✅ Chỉ thay đổi độ trong suốt tooltip khi zoom */
+    const minZoomShowPipeLabel = 15;
+    map.off('zoomend.pipeLabel');
+    map.on('zoomend.pipeLabel', function() {
+       const show = map.getZoom() >= minZoomShowPipeLabel;
+       allPipesGroup.eachLayer(function(layer){
+          if (layer.getTooltip()) {
+             layer.getTooltip().setOpacity(show ? 1 : 0);
+          }
+       });
+    });
+}
+  Object.values(pipeGroups).forEach(g => g.clearLayers());
 
     rows.forEach(r => {
       const cells = r.c || [];
