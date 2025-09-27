@@ -586,6 +586,7 @@ const menuEl = document.querySelector('#menu .menu');
     "Đường cấp": "#9467bd"
   };
   const allPipesGroup = L.featureGroup(); // ❗ KHÔNG .addTo(map) ở đây
+  const pipeGroups = {};
   let layerControl = null;
   function updateLayerControl() {
     if (layerControl) {
@@ -626,7 +627,7 @@ const menuEl = document.querySelector('#menu .menu');
 (function() {
   const sheetUrl = "https://docs.google.com/spreadsheets/d/1-yfsz_JaKXEec14z3ng10q9UgA3BmVTntT5eUq1ItKo/gviz/tq?tqx=out:json";
 
-  const pipeGroups = {};
+
   
 
 
@@ -815,7 +816,8 @@ document.querySelectorAll('#menu .final-item:not(#btnIrrigation)').forEach(subBt
         if (irrigationVisible) {
             map.removeLayer(irrigationGroup);   // ẩn toàn bộ tuyến ống + nhãn id_tuyen
             updateLegend(false);        // ẩn chú giải ống
-            updateLayerControl(false)    // ẩn quản lý hiện thị ống
+            updateLayerControl(false);    // ẩn quản lý hiện thị ống
+            hideIrrigation;
             irrigationVisible = false;          // cập nhật trạng thái
         }
 
