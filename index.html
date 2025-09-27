@@ -697,7 +697,6 @@ function drawPipes(rows) {
       const toado_polyline = cells[6]?.v ?? "";
       
       const latlngs = coordsToLatLngs(toado_polyline);
-
       if (!pipeGroups[he_thong]) {
         pipeGroups[he_thong] = L.layerGroup();
       }
@@ -736,7 +735,41 @@ function drawPipes(rows) {
       poly.addTo(pipeGroups[he_thong]);
       poly.addTo(allPipesGroup);
     });
+data.forEach(row => {
+        // Lấy tọa độ polyline từ cột 6
+        const toado_polyline = row[6]?.v ?? "";
+        const coords = coordsToLatLngs(toado_polyline); // chuyển thành mảng LatLng
 
+        // Vẽ đường ống
+        L.polyline(coords, { color: 'blue' }).addTo(allPipesGroup);
+
+        // === Vẽ chấm đỏ cho "Tưới nhánh 1" ===
+        if (row.id_tuyen === "Tưới nhánh 1") {
+            // Lấy chuỗi vị trí chuyển hướng từ cột 8
+            const chuyenHuongStr = row[7]?.v ?? "";
+            // Chuyển thành mảng số
+            const chuyenHuong = chuyenHuongStr
+                .split(",")
+                .map(s => parseInt(s.trim(), 10))
+                .filter(n => !isNaN(n));
+
+            // Tạo Set loại trừ đầu tuyến (0) và các điểm chuyển hướng
+            const exclude = new Set([0, ...chuyenHuong]);
+
+            // Vẽ chấm đỏ tại các điểm không nằm trong exclude
+            coords.forEach((latlng, idx) => {
+                if (!exclude.has(idx)) {
+                    L.circleMarker(latlng, {
+                        radius: 6,
+                        color: '#ff0000',
+                        fillColor: '#ff0000',
+                        fillOpacity: 1,
+                        weight: 2
+                    }).addTo(allPipesGroup);
+                }
+            });
+        }
+    });
 
 
     /* ✅ Chỉ thay đổi độ trong suốt tooltip khi zoom */
