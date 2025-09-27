@@ -582,8 +582,6 @@ const menuEl = document.querySelector('#menu .menu');
     "Tưới chính": "#FF0000",
     "Tưới nhánh": "#1f77b4",
     "Tưới nhánh 1": "#2ca02c",
-    "Thấp áp": "#ff7f0e",
-    "Đường cấp": "#9467bd"
   };
   const allPipesGroup = L.featureGroup(); // ❗ KHÔNG .addTo(map) ở đây
   const pipeGroups = {};
@@ -620,6 +618,14 @@ const menuEl = document.querySelector('#menu .menu');
                    <span>${k}</span>
                  </div>`;
       });
+      html += `<div style="display:flex;align-items:center;margin:4px 0;">
+                    <span style="width:12px;height:12px;display:inline-block;background:red;margin-right:8px;border-radius:50%;border:1px solid #800"></span>
+                    <span>Đầu PEB tưới</span>
+                 </div>`;
+      html += `<div style="display:flex;align-items:center;margin:4px 0;">
+                    <span style="width:12px;height:12px;display:inline-block;background:blue;margin-right:8px;border-radius:50%;border:1px solid #004"></span>
+                    <span>Trạm bơm</span>
+                 </div>`;
       html += `<div style="margin-top:6px;font-size:12px;">
                 <i>Nét đứt = gang; liền = HDPE (mặc định)</i>
                </div>`;
