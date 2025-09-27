@@ -136,25 +136,13 @@
     background: none !important;
     box-shadow: none !important; /* phòng khi plugin dùng shadow cho icon */
 }
-.leaflet-control-locate a {
-    background: #2196f3 !important;  /* nền tròn xanh */
-    border-radius: 50% !important;
-    width: 36px !important;
-    height: 36px !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .leaflet-control-locate a::after {
-    content: "\f124";  /* mã fa-location-arrow */
-    font-family: "Font Awesome 5 Free"; /* hoặc 6 Free tùy bản */
-    font-weight: 900;
-    color: white;
-    font-size: 18px;
+    content: "";
+    width: 18px;
+    height: 18px;
+    background: url('arrow-blue.svg') center/contain no-repeat;
+    display: block;
 }
-
-
 
 </style>
 </head>
