@@ -117,14 +117,15 @@
   }
 /* Mặc định trên mọi thiết bị */
 }
-  .pipe-label {
+.pipe-label {
   font-weight: bold;
-  color: #0000ff;
+  color: #0000ff;              /* màu chữ dễ nhìn */
   background: rgba(255,255,255,0.7);
   border: none;
   box-shadow: none;
-  font-size: 12px;
+  font-size: 14px;
 }
+
 </style>
 </head>
 <body>
@@ -659,13 +660,13 @@ function drawPipes(rows) {
       const dash = (materialStyle[loai_ong] && materialStyle[loai_ong].dashArray) || null;
 
       const poly = L.polyline(latlngs, {
-        color,
-        weight,
-        dashArray: dash,
-        opacity: 1,
-        lineCap: 'round'
+          color,
+          weight,
+          dashArray: dash,
+          opacity: 1,
+          lineCap: 'round'
       });
-
+      
       const popupHtml = `
         <b>${ten_duong || id_tuyen}</b><br/>
         Hệ thống: ${he_thong}<br/>
@@ -674,20 +675,24 @@ function drawPipes(rows) {
         Đường kính: ${duong_kinh_mm ? duong_kinh_mm + ' mm' : 'N/A'}
       `;
       poly.bindPopup(popupHtml);
-
-      /* ✅ Gắn tooltip id_tuyen – ban đầu ẩn bằng setOpacity(0) */
+      
+      /* ✅ gắn nhãn id_tuyen dạng tooltip permanent */
       if (id_tuyen) {
         poly.bindTooltip(id_tuyen, {
           permanent: true,
           direction: 'center',
           className: 'pipe-label'
-        });
-        // ẩn tooltip ngay từ đầu
-        poly.getTooltip().setOpacity(0);
+        }).openTooltip(); // tooltip tồn tại từ đầu
       }
-
+      
+      /* ban đầu ẩn toàn bộ tooltip */
+      if (poly.getTooltip()) {
+         poly.getTooltip().setOpacity(0);
+      }
+      
       poly.addTo(pipeGroups[he_thong]);
       poly.addTo(allPipesGroup);
+
     });
 
     if (allPipesGroup.getLayers().length > 0) {
@@ -700,15 +705,16 @@ function drawPipes(rows) {
 
     /* ✅ Chỉ thay đổi độ trong suốt tooltip khi zoom */
     const minZoomShowPipeLabel = 15;
+    
     map.off('zoomend.pipeLabel');
-    map.on('zoomend.pipeLabel', function() {
+    map.on('zoomend.pipeLabel', function () {
        const show = map.getZoom() >= minZoomShowPipeLabel;
-       allPipesGroup.eachLayer(function(layer){
-          if (layer.getTooltip()) {
-             layer.getTooltip().setOpacity(show ? 1 : 0);
-          }
+       allPipesGroup.eachLayer(function (layer) {
+          const tt = layer.getTooltip && layer.getTooltip();
+          if (tt) tt.setOpacity(show ? 1 : 0);
        });
     });
+
 }
 
 
