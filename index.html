@@ -583,6 +583,7 @@ const menuEl = document.querySelector('#menu .menu');
     "Tưới nhánh": "#1f77b4",
     "Tưới nhánh 1": "#2ca02c",
   };
+  const pebGroup = L.layerGroup();
   const allPipesGroup = L.featureGroup(); // ❗ KHÔNG .addTo(map) ở đây
   const pipeGroups = {};
   let irrigationVisible = false;   // trạng thái đang hiển thị hay không
@@ -757,7 +758,7 @@ function drawPipes(rows) {
                       fillColor: '#ff0000',
                       fillOpacity: 1,
                       weight: 2
-                  }).addTo(allPipesGroup);
+                  }).addTo(pebGroup);
               }
           });
       }
@@ -776,10 +777,15 @@ function drawPipes(rows) {
                 }
             }
         });
-    });
-
-
-
+      
+        // Hiển thị/ẩn chấm đỏ đầu PEB
+        pebGroup.eachLayer(function(layer) {
+            layer.setStyle({
+                opacity: z >= showZoom ? 1 : 0,
+                fillOpacity: z >= showZoom ? 1 : 0
+            });
+        });
+        });
 }
 
 
