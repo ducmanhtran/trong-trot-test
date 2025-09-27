@@ -578,7 +578,43 @@ const menuEl = document.querySelector('#menu .menu');
     clearHighlights();
     taskListDiv.innerHTML = '';
   });
-  <!-- Dán phần này sau khi bạn đã có biến `map` (Leaflet) -->
+  let layerControl = null;
+  function updateLayerControl() {
+    if (layerControl) {
+      map.removeControl(layerControl);
+      layerControl = null;
+    }
+    const overlays = {};
+    overlays["Tất cả ống"] = allPipesGroup;
+    Object.keys(pipeGroups).forEach(k => overlays[k] = pipeGroups[k]);
+    layerControl = L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(map);
+  }
+
+  let legendControl = null;
+  function updateLegend() {
+    if (legendControl) map.removeControl(legendControl);
+    legendControl = L.control({ position: 'bottomleft' });
+    legendControl.onAdd = function() {
+      const div = L.DomUtil.create('div', 'pipe-legend');
+      div.style.background = 'rgba(255,255,255,0.95)';
+      div.style.padding = '8px';
+      div.style.borderRadius = '6px';
+      div.style.boxShadow = '0 1px 4px rgba(0,0,0,0.2)';
+      let html = '<b>Chú giải ống</b><br/>';
+      Object.keys(systemColors).forEach(k => {
+        html += `<div style="display:flex;align-items:center;margin:4px 0;">
+                   <span style="width:24px;height:6px;display:inline-block;background:${systemColors[k]};margin-right:8px;border-radius:3px"></span>
+                   <span>${k}</span>
+                 </div>`;
+      });
+      html += `<div style="margin-top:6px;font-size:12px;">
+                <i>Nét đứt = gang; liền = HDPE (mặc định)</i>
+               </div>`;
+      div.innerHTML = html;
+      return div;
+    };
+    legendControl.addTo(map);
+  }
 (function() {
   const sheetUrl = "https://docs.google.com/spreadsheets/d/1-yfsz_JaKXEec14z3ng10q9UgA3BmVTntT5eUq1ItKo/gviz/tq?tqx=out:json";
 
@@ -637,43 +673,7 @@ const menuEl = document.querySelector('#menu .menu');
     if (d <= 250) return 4;
     return 6;
   }
-  let layerControl = null;
-  function updateLayerControl() {
-    if (layerControl) {
-      map.removeControl(layerControl);
-      layerControl = null;
-    }
-    const overlays = {};
-    overlays["Tất cả ống"] = allPipesGroup;
-    Object.keys(pipeGroups).forEach(k => overlays[k] = pipeGroups[k]);
-    layerControl = L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(map);
-  }
 
-  let legendControl = null;
-  function updateLegend() {
-    if (legendControl) map.removeControl(legendControl);
-    legendControl = L.control({ position: 'bottomleft' });
-    legendControl.onAdd = function() {
-      const div = L.DomUtil.create('div', 'pipe-legend');
-      div.style.background = 'rgba(255,255,255,0.95)';
-      div.style.padding = '8px';
-      div.style.borderRadius = '6px';
-      div.style.boxShadow = '0 1px 4px rgba(0,0,0,0.2)';
-      let html = '<b>Chú giải ống</b><br/>';
-      Object.keys(systemColors).forEach(k => {
-        html += `<div style="display:flex;align-items:center;margin:4px 0;">
-                   <span style="width:24px;height:6px;display:inline-block;background:${systemColors[k]};margin-right:8px;border-radius:3px"></span>
-                   <span>${k}</span>
-                 </div>`;
-      });
-      html += `<div style="margin-top:6px;font-size:12px;">
-                <i>Nét đứt = gang; liền = HDPE (mặc định)</i>
-               </div>`;
-      div.innerHTML = html;
-      return div;
-    };
-    legendControl.addTo(map);
-  }
 
 
 function drawPipes(rows) {
