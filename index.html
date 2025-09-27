@@ -788,6 +788,9 @@ function drawPipes(rows) {
 // ⚠️ khai báo biến toàn cục
 let irrigationVisible = false;   // trạng thái đang hiển thị hay không
 
+// ⚠️ khai báo biến toàn cục
+let irrigationVisible = false;   // trạng thái đang hiển thị hay không
+
 document.getElementById('btnIrrigation').addEventListener('click', function () {
     // Đóng menu mobile như cũ
     if (window.innerWidth <= 768) {
@@ -795,13 +798,12 @@ document.getElementById('btnIrrigation').addEventListener('click', function () {
         hamburgerBtn.setAttribute('aria-expanded', 'false');
     }
 
-    // 🔹 Luôn BẬT hệ thống tưới mỗi khi bấm
-    // vẽ dữ liệu nếu cần
-    showIrrigation();                  // hàm load/vẽ dữ liệu ống
-    map.addLayer(irrigationGroup);     // đảm bảo nhóm ống đã hiển thị
-    showIrrigationLegend(true);        // hiện chú giải
-    irrigationVisible = true;          // cập nhật trạng thái
+    // Bật / tắt nhóm hệ thống tưới
+        showIrrigation();               // ← giữ nguyên hàm cũ của bạn
+        map.addLayer(irrigationGroup);  // bật toàn bộ layer ống + nhãn
+        showIrrigationLegend(true);     // bật chú giải ống
 });
+
 
 // Các mục final-item khác: tắt hệ thống tưới
 // Khi click vào bất kỳ mục final-item KHÁC "Hệ thống tưới" => tắt nhóm ống tưới
