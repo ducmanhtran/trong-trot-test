@@ -587,6 +587,7 @@ const menuEl = document.querySelector('#menu .menu');
   };
   const allPipesGroup = L.featureGroup(); // ❗ KHÔNG .addTo(map) ở đây
   const pipeGroups = {};
+  let irrigationVisible = false;   // trạng thái đang hiển thị hay không
   let layerControl = null;
   function updateLayerControl(show = true) {
     if (layerControl) {
@@ -788,7 +789,7 @@ function drawPipes(rows) {
 
 // Nút Hệ thống tưới: click mới bật
 // ⚠️ khai báo biến toàn cục
-let irrigationVisible = false;   // trạng thái đang hiển thị hay không
+
 
 document.getElementById('btnIrrigation').addEventListener('click', function () {
     // Đóng menu mobile như cũ
@@ -816,7 +817,6 @@ document.querySelectorAll('#menu .final-item:not(#btnIrrigation)').forEach(subBt
             updateLegend(false);        // ẩn chú giải ống
             updateLayerControl(false);    // ẩn quản lý hiện thị ống
             hideIrrigation();
-            hideLegendAndLayerControl()
             irrigationVisible = false;          // cập nhật trạng thái
         }
 
