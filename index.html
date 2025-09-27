@@ -795,17 +795,12 @@ document.getElementById('btnIrrigation').addEventListener('click', function () {
         hamburgerBtn.setAttribute('aria-expanded', 'false');
     }
 
-    // Bật / tắt nhóm hệ thống tưới
-    irrigationVisible = !irrigationVisible;
-    if (irrigationVisible) {
-        // vẽ dữ liệu ống (nếu cần load dữ liệu mỗi lần)
-        showIrrigation();               // ← giữ nguyên hàm cũ của bạn
-        map.addLayer(irrigationGroup);  // bật toàn bộ layer ống + nhãn
-        showIrrigationLegend(true);     // bật chú giải ống
-    } else {
-        map.removeLayer(irrigationGroup); // tắt toàn bộ ống + nhãn
-        showIrrigationLegend(false);      // tắt chú giải ống
-    }
+    // 🔹 Luôn BẬT hệ thống tưới mỗi khi bấm
+    // vẽ dữ liệu nếu cần
+    showIrrigation();                  // hàm load/vẽ dữ liệu ống
+    map.addLayer(irrigationGroup);     // đảm bảo nhóm ống đã hiển thị
+    showIrrigationLegend(true);        // hiện chú giải
+    irrigationVisible = true;          // cập nhật trạng thái
 });
 
 // Các mục final-item khác: tắt hệ thống tưới
