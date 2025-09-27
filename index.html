@@ -740,31 +740,29 @@ function drawPipes(rows) {
       poly.bindPopup(popupHtml);
       poly.addTo(pipeGroups[he_thong]);
       poly.addTo(allPipesGroup);
+      // --- Vẽ chấm đỏ cho "Tưới nhánh 1" ---
+  if (he_thong === "Tưới nhánh 1") {
+      const chuyenHuongStr = cells[7]?.v ?? "";
+      const chuyenHuong = chuyenHuongStr
+          .split(",")
+          .map(s => parseInt(s.trim(), 10))
+          .filter(n => !isNaN(n));
+      const exclude = new Set([0, ...chuyenHuong]);
+
+      coords.forEach((latlng, idx) => {
+          if (!exclude.has(idx)) {
+              L.circleMarker(latlng, {
+                  radius: 6,
+                  color: '#ff0000',
+                  fillColor: '#ff0000',
+                  fillOpacity: 1,
+                  weight: 2
+              }).addTo(allPipesGroup);
+          }
+      });
+  }
     });
-      if (cells[0]?.v === "Tưới nhánh 1") {  // hoặc id_tuyen
-        // Chuỗi vị trí chuyển hướng từ cột 8
-        const chuyenHuongStr = cells[7]?.v ?? "";
-        const chuyenHuong = chuyenHuongStr
-            .split(",")
-            .map(s => parseInt(s.trim(), 10))
-            .filter(n => !isNaN(n));
-    
-        // Tạo Set để loại trừ đầu tuyến (0) và các điểm chuyển hướng
-        const exclude = new Set([0, ...chuyenHuong]);
-    
-        // Vẽ chấm đỏ tại các điểm không nằm trong exclude
-        coords.forEach((latlng, idx) => {
-            if (!exclude.has(idx)) {
-                L.circleMarker(latlng, {
-                    radius: 6,
-                    color: '#ff0000',
-                    fillColor: '#ff0000',
-                    fillOpacity: 1,
-                    weight: 2
-                }).addTo(allPipesGroup);
-            }
-        });
-    }
+
 
     /* ✅ Chỉ thay đổi độ trong suốt tooltip khi zoom */
     map.on('zoomend', function () {
