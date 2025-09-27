@@ -678,7 +678,7 @@ function drawPipes(rows) {
       })
       .setContent(id_tuyen)          // ⚠ hiển thị id_tuyen
       .setLatLng(center);
-      irrigationGroup.addLayer(tooltip);
+      irrigationGroup.addLayer(mytooltip);
       map.addLayer(poly.myTooltip);
 
       const popupHtml = `
@@ -798,7 +798,8 @@ document.getElementById('btnIrrigation').addEventListener('click', function () {
     // Bật / tắt nhóm hệ thống tưới
         showIrrigation();               // ← giữ nguyên hàm cũ của bạn
         map.addLayer(irrigationGroup);  // bật toàn bộ layer ống + nhãn
-        showIrrigationLegend(true);     // bật chú giải ống
+        updateLegend(true);     // bật chú giải ống
+        updateLayerControl(true); //bật quản lý hiển thị ống
 });
 
 
@@ -810,7 +811,8 @@ document.querySelectorAll('#menu .final-item:not(#btnIrrigation)').forEach(subBt
         // 👉 Chỉ tắt nếu đang bật
         if (irrigationVisible) {
             map.removeLayer(irrigationGroup);   // ẩn toàn bộ tuyến ống + nhãn id_tuyen
-            showIrrigationLegend(false);        // ẩn chú giải ống
+            updateLegend(false);        // ẩn chú giải ống
+            updateLayerControl(false)    // ẩn quản lý hiện thị ống
             irrigationVisible = false;          // cập nhật trạng thái
         }
 
