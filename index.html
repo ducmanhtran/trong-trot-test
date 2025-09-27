@@ -735,7 +735,7 @@ function drawPipes(rows) {
       poly.addTo(pipeGroups[he_thong]);
       poly.addTo(allPipesGroup);
     });
-data.forEach(row => {
+  rows.forEach(row => {
         // Lấy tọa độ polyline từ cột 6
         const toado_polyline = row[6]?.v ?? "";
         const coords = coordsToLatLngs(toado_polyline); // chuyển thành mảng LatLng
