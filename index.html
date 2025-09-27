@@ -213,6 +213,8 @@ window.onload = function () {
   const actualLotsGroup = L.layerGroup();
   const disputedGroup = L.layerGroup();
   const highlightGroup = L.layerGroup().addTo(map);
+  const irrigationGroup = L.layerGroup().addTo(map); // nhóm Hệ thống tưới
+  irrigationGroup.remove(); // Ẩn mặc định
 
   // toggle nhãn
   const toggleBtn = L.control({ position: 'bottomright' });
@@ -639,7 +641,7 @@ const menuEl = document.querySelector('#menu .menu');
 function drawPipes(rows) {
     allPipesGroup.clearLayers();
     Object.values(pipeGroups).forEach(g => g.clearLayers());
-
+    irrigationGroup.clearLayers();   // xoá cũ
     rows.forEach(r => {
       const cells = r.c || [];
       const id_tuyen   = cells[0]?.v ?? "";
@@ -666,7 +668,7 @@ function drawPipes(rows) {
           dashArray: dash,
           opacity: 1,
           lineCap: 'round'
-      });
+      }).addTo(irrigationGroup);
       const center = poly.getBounds().getCenter();
       poly.myTooltip = L.tooltip({
           permanent: true,           // tooltip gắn cố định
@@ -676,7 +678,7 @@ function drawPipes(rows) {
       })
       .setContent(id_tuyen)          // ⚠ hiển thị id_tuyen
       .setLatLng(center);
-      
+      irrigationGroup.addLayer(tooltip);
       map.addLayer(poly.myTooltip);
 
       const popupHtml = `
@@ -701,19 +703,15 @@ function drawPipes(rows) {
 
     /* ✅ Chỉ thay đổi độ trong suốt tooltip khi zoom */
     map.on('zoomend', function () {
-        const z = map.getZoom();      // lấy mức zoom hiện tại
-        const showZoom = 17;          // <== NGƯỠNG BẠN MUỐN (ví dụ 17)
-    
-        allPipesGroup.eachLayer(function (layer) {
-            if (layer.myTooltip) {
-                if (z >= showZoom) {
-                    layer.myTooltip.getElement().style.opacity = 1;
-                } else {
-                    layer.myTooltip.getElement().style.opacity = 0;
-                }
+        const z = map.getZoom();
+        const showZoom = 17;
+        irrigationGroup.eachLayer(function (layer) {
+            if (layer instanceof L.Tooltip) {
+                layer.getElement().style.opacity = (z >= showZoom ? 1 : 0);
             }
         });
     });
+
 
 
 }
@@ -787,11 +785,26 @@ function drawPipes(rows) {
 })();
 
 // Nút Hệ thống tưới: click mới bật
+// ⚠️ khai báo biến toàn cục
+let irrigationVisible = false;   // trạng thái đang hiển thị hay không
+
 document.getElementById('btnIrrigation').addEventListener('click', function () {
-    showIrrigation();
+    // Đóng menu mobile như cũ
     if (window.innerWidth <= 768) {
         menuEl.classList.remove('show');
         hamburgerBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    // Bật / tắt nhóm hệ thống tưới
+    irrigationVisible = !irrigationVisible;
+    if (irrigationVisible) {
+        // vẽ dữ liệu ống (nếu cần load dữ liệu mỗi lần)
+        showIrrigation();               // ← giữ nguyên hàm cũ của bạn
+        map.addLayer(irrigationGroup);  // bật toàn bộ layer ống + nhãn
+        showIrrigationLegend(true);     // bật chú giải ống
+    } else {
+        map.removeLayer(irrigationGroup); // tắt toàn bộ ống + nhãn
+        showIrrigationLegend(false);      // tắt chú giải ống
     }
 });
 
