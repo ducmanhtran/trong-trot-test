@@ -666,7 +666,18 @@ function drawPipes(rows) {
           opacity: 1,
           lineCap: 'round'
       });
+      const center = poly.getBounds().getCenter();
+      poly.myTooltip = L.tooltip({
+          permanent: true,           // tooltip gắn cố định
+          direction: 'center',
+          className: 'pipe-label',    // để dễ CSS
+          opacity: 0                  // BẮT ĐẦU ẨN
+      })
+      .setContent(id_tuyen)          // ⚠ hiển thị id_tuyen
+      .setLatLng(center);
       
+      map.addLayer(poly.myTooltip);
+
       const popupHtml = `
         <b>${ten_duong || id_tuyen}</b><br/>
         Hệ thống: ${he_thong}<br/>
@@ -704,16 +715,21 @@ function drawPipes(rows) {
     updateLegend();
 
     /* ✅ Chỉ thay đổi độ trong suốt tooltip khi zoom */
-    const minZoomShowPipeLabel = 1;
+    map.on('zoomend', function () {
+        const z = map.getZoom();      // lấy mức zoom hiện tại
+        const showZoom = 17;          // <== NGƯỠNG BẠN MUỐN (ví dụ 17)
     
-    map.off('zoomend.pipeLabel');
-    map.on('zoomend.pipeLabel', function () {
-       const show = map.getZoom() >= minZoomShowPipeLabel;
-       allPipesGroup.eachLayer(function (layer) {
-          const tt = layer.getTooltip && layer.getTooltip();
-          if (tt) tt.setOpacity(show ? 1 : 0);
-       });
+        allPipesGroup.eachLayer(function (layer) {
+            if (layer.myTooltip) {
+                if (z >= showZoom) {
+                    layer.myTooltip.getElement().style.opacity = 1;
+                } else {
+                    layer.myTooltip.getElement().style.opacity = 0;
+                }
+            }
+        });
     });
+
 
 }
 
