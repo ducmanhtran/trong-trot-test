@@ -809,15 +809,25 @@ document.getElementById('btnIrrigation').addEventListener('click', function () {
 });
 
 // Các mục final-item khác: tắt hệ thống tưới
+// Khi click vào bất kỳ mục final-item KHÁC "Hệ thống tưới" => tắt nhóm ống tưới
 document.querySelectorAll('#menu .final-item:not(#btnIrrigation)').forEach(subBtn => {
     subBtn.addEventListener('click', function () {
-        hideIrrigation();  // 🔴 Tắt ống tưới
+
+        // 👉 Chỉ tắt nếu đang bật
+        if (irrigationVisible) {
+            map.removeLayer(irrigationGroup);   // ẩn toàn bộ tuyến ống + nhãn id_tuyen
+            showIrrigationLegend(false);        // ẩn chú giải ống
+            irrigationVisible = false;          // cập nhật trạng thái
+        }
+
+        // Đóng menu mobile như cũ
         if (window.innerWidth <= 768) {
             menuEl.classList.remove('show');
             hamburgerBtn.setAttribute('aria-expanded', 'false');
         }
     });
 });
+
 
 };
 </script>
