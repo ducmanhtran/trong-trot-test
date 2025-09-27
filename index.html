@@ -748,8 +748,7 @@ function drawPipes(rows) {
                 var el = layer.getElement && layer.getElement();
                 if (el) {
                     el.style.opacity = (z >= showZoom ? 1 : 0);
-}
-
+                }
             }
         });
     });
@@ -817,7 +816,7 @@ document.querySelectorAll('#menu .final-item:not(#btnIrrigation)').forEach(subBt
             map.removeLayer(irrigationGroup);   // ẩn toàn bộ tuyến ống + nhãn id_tuyen
             updateLegend(false);        // ẩn chú giải ống
             updateLayerControl(false);    // ẩn quản lý hiện thị ống
-            hideIrrigation;
+            hideIrrigation();
             irrigationVisible = false;          // cập nhật trạng thái
         }
 
