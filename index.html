@@ -580,7 +580,7 @@ const menuEl = document.querySelector('#menu .menu');
   const sheetUrl = "https://docs.google.com/spreadsheets/d/1-yfsz_JaKXEec14z3ng10q9UgA3BmVTntT5eUq1ItKo/gviz/tq?tqx=out:json";
 
   const pipeGroups = {};
-  const allPipesGroup = L.layerGroup(); // ❗ KHÔNG .addTo(map) ở đây
+  const allPipesGroup = L.featureGroup(); // ❗ KHÔNG .addTo(map) ở đây
 
   const systemColors = {
     "Tưới chính": "#FF0000",
