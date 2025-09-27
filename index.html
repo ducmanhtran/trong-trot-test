@@ -129,24 +129,32 @@
   font-size: 14px;
 }
 .leaflet-tooltip.pipe-label { opacity:0; }
-/* Đổi nền tròn màu xanh */
-.leaflet-control-locate a {
-    background: #2196f3 !important;   /* xanh dương */
-    border-radius: 50% !important;    /* bo tròn */
-    width: 34px !important;
-    height: 34px !important;
-    line-height: 34px !important;
-    text-align: center;
-    color: white !important;          /* màu mũi tên */
+/* 1️⃣ Ẩn icon gốc hoàn toàn */
+.leaflet-control-locate a::before {
+    content: none !important;   /* bỏ ký tự pseudo mặc định */
 }
 
-/* Đổi biểu tượng thành mũi tên Font Awesome (ví dụ: fa-location-arrow) */
-.leaflet-control-locate a::before {
-    content: "\f124";                 /* mã unicode của fa-location-arrow */
-    font-family: "Font Awesome 5 Free";   /* hoặc 6 Free tuỳ version */
+/* 2️⃣ Tự thiết kế nút tròn xanh */
+.leaflet-control-locate a {
+    background: #2196f3 !important;   /* nền xanh */
+    border-radius: 50% !important;
+    width: 34px !important;
+    height: 34px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+}
+
+/* 3️⃣ Thêm mũi tên bằng Font Awesome */
+.leaflet-control-locate a::after {
+    content: "\f124";    /* fa-location-arrow */
+    font-family: "Font Awesome 5 Free";  /* hoặc 6 Free tùy version FA bạn đã load */
     font-weight: 900;
     font-size: 18px;
+    color: white;
 }
+
 
 </style>
 </head>
