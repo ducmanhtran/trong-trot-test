@@ -704,7 +704,7 @@ function drawPipes(rows) {
     updateLegend();
 
     /* ✅ Chỉ thay đổi độ trong suốt tooltip khi zoom */
-    const minZoomShowPipeLabel = 15;
+    const minZoomShowPipeLabel = 14;
     
     map.off('zoomend.pipeLabel');
     map.on('zoomend.pipeLabel', function () {
