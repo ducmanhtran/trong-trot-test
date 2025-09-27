@@ -7,6 +7,11 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="apple-touch-icon" sizes="192x192" href="https://github.com/ducmanhtran/trong-trot-test/blob/main/icon1.png?raw=true">
   <link rel="icon" type="image/png" sizes="192x192" href="https://github.com/ducmanhtran/trong-trot-test/blob/main/icon1.png?raw=true">
+  <!-- Leaflet Locate CSS & JS (CDN) -->
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
+  <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
+
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <style>
 /* ===== MENU ===== */
@@ -207,6 +212,18 @@ window.onload = function () {
   const map = L.map('map', { center: [17.5089721, 106.4670833], zoom: 13, zoomControl: false });
   L.control.zoom({ position: 'bottomright' }).addTo(map);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+  L.control.locate({
+    position: 'topleft',        // vị trí nút trên bản đồ: 'topleft','topright','bottomleft','bottomright'
+    strings: {
+        title: "Định vị vệ tinh" // tooltip khi rê chuột
+    },
+    flyTo: true,                // map tự động bay (animate) đến vị trí
+    keepCurrentZoomLevel: false,// zoom đến mức phù hợp với độ chính xác GPS
+    showPopup: true,            // hiện popup với độ chính xác
+    locateOptions: {
+        enableHighAccuracy: true // bật GPS chính xác cao (nếu thiết bị hỗ trợ)
+    }
+  }).addTo(map);
 
   const cropsGroup = L.layerGroup().addTo(map);
   const companyLegalGroup = L.layerGroup();
