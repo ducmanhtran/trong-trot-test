@@ -588,7 +588,7 @@ const menuEl = document.querySelector('#menu .menu');
   const allPipesGroup = L.featureGroup(); // ❗ KHÔNG .addTo(map) ở đây
   const pipeGroups = {};
   let layerControl = null;
-  function updateLayerControl() {
+  function updateLayerControl(show = true) {
     if (layerControl) {
       map.removeControl(layerControl);
       layerControl = null;
@@ -600,7 +600,7 @@ const menuEl = document.querySelector('#menu .menu');
   }
 
   let legendControl = null;
-  function updateLegend() {
+  function updateLegend(show = true) {
     if (legendControl) map.removeControl(legendControl);
     legendControl = L.control({ position: 'bottomleft' });
     legendControl.onAdd = function() {
@@ -624,14 +624,13 @@ const menuEl = document.querySelector('#menu .menu');
     };
     legendControl.addTo(map);
   }
+  function hideLegendAndLayerControl() {
+    if (legendControl) map.removeControl(legendControl);
+    if (layerControl)  map.removeControl(layerControl);
+  }
+
 (function() {
   const sheetUrl = "https://docs.google.com/spreadsheets/d/1-yfsz_JaKXEec14z3ng10q9UgA3BmVTntT5eUq1ItKo/gviz/tq?tqx=out:json";
-
-
-  
-
-
-
   const materialStyle = {
     "u_PVC": { dashArray: null },
     "Gang": { dashArray: "6,6" },
@@ -817,6 +816,7 @@ document.querySelectorAll('#menu .final-item:not(#btnIrrigation)').forEach(subBt
             updateLegend(false);        // ẩn chú giải ống
             updateLayerControl(false);    // ẩn quản lý hiện thị ống
             hideIrrigation();
+            hideLegendAndLayerControl()
             irrigationVisible = false;          // cập nhật trạng thái
         }
 
