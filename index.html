@@ -698,9 +698,6 @@ function drawPipes(rows) {
       if (bounds.isValid()) map.fitBounds(bounds.pad(0.1));
     }
 
-    updateLayerControl();
-    updateLegend();
-
     /* ✅ Chỉ thay đổi độ trong suốt tooltip khi zoom */
     map.on('zoomend', function () {
         const z = map.getZoom();
