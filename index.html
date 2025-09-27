@@ -701,7 +701,7 @@ function drawPipes(rows) {
       const loai_ong   = cells[4]?.v ?? "";
       const duong_kinh_mm = cells[5]?.v ?? "";
       const toado_polyline = cells[6]?.v ?? "";
-      
+      const coords = coordsToLatLngs(toado_polyline);
       const latlngs = coordsToLatLngs(toado_polyline);
       if (!pipeGroups[he_thong]) {
         pipeGroups[he_thong] = L.layerGroup();
@@ -741,26 +741,26 @@ function drawPipes(rows) {
       poly.addTo(pipeGroups[he_thong]);
       poly.addTo(allPipesGroup);
       // --- Vẽ chấm đỏ cho "Tưới nhánh 1" ---
-  if (he_thong === "Tưới nhánh 1") {
-      const chuyenHuongStr = cells[7]?.v ?? "";
-      const chuyenHuong = chuyenHuongStr
-          .split(",")
-          .map(s => parseInt(s.trim(), 10))
-          .filter(n => !isNaN(n));
-      const exclude = new Set([0, ...chuyenHuong]);
-
-      coords.forEach((latlng, idx) => {
-          if (!exclude.has(idx)) {
-              L.circleMarker(latlng, {
-                  radius: 6,
-                  color: '#ff0000',
-                  fillColor: '#ff0000',
-                  fillOpacity: 1,
-                  weight: 2
-              }).addTo(allPipesGroup);
-          }
-      });
-  }
+      if (he_thong === "Tưới nhánh 1") {
+          const chuyenHuongStr = cells[7]?.v ?? "";
+          const chuyenHuong = chuyenHuongStr
+              .split(",")
+              .map(s => parseInt(s.trim(), 10))
+              .filter(n => !isNaN(n));
+          const exclude = new Set([0, ...chuyenHuong]);
+    
+          coords.forEach((latlng, idx) => {
+              if (!exclude.has(idx)) {
+                  L.circleMarker(latlng, {
+                      radius: 6,
+                      color: '#ff0000',
+                      fillColor: '#ff0000',
+                      fillOpacity: 1,
+                      weight: 2
+                  }).addTo(allPipesGroup);
+              }
+          });
+      }
     });
 
 
