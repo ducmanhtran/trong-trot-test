@@ -578,6 +578,13 @@ const menuEl = document.querySelector('#menu .menu');
     clearHighlights();
     taskListDiv.innerHTML = '';
   });
+    const systemColors = {
+    "Tưới chính": "#FF0000",
+    "Tưới nhánh": "#1f77b4",
+    "Tưới nhánh 1": "#2ca02c",
+    "Thấp áp": "#ff7f0e",
+    "Đường cấp": "#9467bd"
+  };
   let layerControl = null;
   function updateLayerControl() {
     if (layerControl) {
@@ -621,13 +628,7 @@ const menuEl = document.querySelector('#menu .menu');
   const pipeGroups = {};
   const allPipesGroup = L.featureGroup(); // ❗ KHÔNG .addTo(map) ở đây
 
-  const systemColors = {
-    "Tưới chính": "#FF0000",
-    "Tưới nhánh": "#1f77b4",
-    "Tưới nhánh 1": "#2ca02c",
-    "Thấp áp": "#ff7f0e",
-    "Đường cấp": "#9467bd"
-  };
+
 
   const materialStyle = {
     "u_PVC": { dashArray: null },
