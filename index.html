@@ -584,6 +584,7 @@ const menuEl = document.querySelector('#menu .menu');
     "Tưới nhánh 1": "#2ca02c",
   };
   const pebGroup = L.layerGroup();
+  pebGroup.addTo(map);;
   const allPipesGroup = L.featureGroup(); // ❗ KHÔNG .addTo(map) ở đây
   const pipeGroups = {};
   let irrigationVisible = false;   // trạng thái đang hiển thị hay không
@@ -693,6 +694,7 @@ function drawPipes(rows) {
     allPipesGroup.clearLayers();
     Object.values(pipeGroups).forEach(g => g.clearLayers());
     irrigationGroup.clearLayers();   // xoá cũ
+    pebGroup.clearLayers();
     rows.forEach(r => {
       const cells = r.c || [];
       const id_tuyen   = cells[0]?.v ?? "";
@@ -763,8 +765,7 @@ function drawPipes(rows) {
           });
       }
     });
-
-
+}
     /* ✅ Chỉ thay đổi độ trong suốt tooltip khi zoom */
     map.on('zoomend', function () {
         const z = map.getZoom();
@@ -783,11 +784,9 @@ function drawPipes(rows) {
             layer.setStyle({
                 opacity: z >= showZoom ? 1 : 0,
                 fillOpacity: z >= showZoom ? 1 : 0
-            });
+              });
+          });
         });
-        });
-}
-
 
   // ❗ Chỉ nạp dữ liệu, KHÔNG tự add allPipesGroup
   fetch(sheetUrl).then(r => r.text()).then(text => {
