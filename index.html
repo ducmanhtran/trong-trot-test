@@ -585,6 +585,7 @@ const menuEl = document.querySelector('#menu .menu');
     "Thấp áp": "#ff7f0e",
     "Đường cấp": "#9467bd"
   };
+  const allPipesGroup = L.featureGroup(); // ❗ KHÔNG .addTo(map) ở đây
   let layerControl = null;
   function updateLayerControl() {
     if (layerControl) {
@@ -626,7 +627,7 @@ const menuEl = document.querySelector('#menu .menu');
   const sheetUrl = "https://docs.google.com/spreadsheets/d/1-yfsz_JaKXEec14z3ng10q9UgA3BmVTntT5eUq1ItKo/gviz/tq?tqx=out:json";
 
   const pipeGroups = {};
-  const allPipesGroup = L.featureGroup(); // ❗ KHÔNG .addTo(map) ở đây
+  
 
 
 
