@@ -125,6 +125,7 @@
   box-shadow: none;
   font-size: 14px;
 }
+.leaflet-tooltip.pipe-label { opacity:0; }
 
 </style>
 </head>
@@ -686,24 +687,8 @@ function drawPipes(rows) {
         Đường kính: ${duong_kinh_mm ? duong_kinh_mm + ' mm' : 'N/A'}
       `;
       poly.bindPopup(popupHtml);
-      
-      /* ✅ gắn nhãn id_tuyen dạng tooltip permanent */
-      if (id_tuyen) {
-        poly.bindTooltip(id_tuyen, {
-          permanent: true,
-          direction: 'center',
-          className: 'pipe-label'
-        }).openTooltip(); // tooltip tồn tại từ đầu
-      }
-      
-      /* ban đầu ẩn toàn bộ tooltip */
-      if (poly.getTooltip()) {
-         poly.getTooltip().setOpacity(0);
-      }
-      
       poly.addTo(pipeGroups[he_thong]);
       poly.addTo(allPipesGroup);
-
     });
 
     if (allPipesGroup.getLayers().length > 0) {
