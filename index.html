@@ -646,22 +646,45 @@ const menuEl = document.querySelector('#menu .menu');
   const allPipesGroup = L.featureGroup(); // ❗ KHÔNG .addTo(map) ở đây
   const pipeGroups = {};
   let irrigationVisible = false;   // trạng thái đang hiển thị hay không
-  let layerControl = null;
+  const allPipesPlaceholder = L.layerGroup(); // rỗng
+  
   function updateLayerControl(show = true) {
     if (layerControl) {
       map.removeControl(layerControl);
       layerControl = null;
     }
     if (!show) return;
-    const overlays = {};
-    overlays["Tất cả ống"] = allPipesGroup;
+  
+    // overlays: placeholder cho "Tất cả ống" + từng nhóm thực tế
+    const overlays = { "Tất cả ống": allPipesPlaceholder };
     Object.keys(pipeGroups).forEach(k => overlays[k] = pipeGroups[k]);
-    layerControl = L.control.layers(null, overlays, {
-      collapsed: false,
-      position: 'bottomleft',
-    }).addTo(map);
-
+  
+    layerControl = L.control.layers(null, overlays, { collapsed: false, position: 'bottomleft' }).addTo(map);
   }
+  
+  // lắng nghe khi user tick/un-tick 1 overlay
+  map.on('overlayadd', function(e) {
+    // nếu user tick "Tất cả ống"
+    if (e.layer === allPipesPlaceholder) {
+      // bật tất cả nhóm con
+      Object.values(pipeGroups).forEach(g => { if (!map.hasLayer(g)) map.addLayer(g); });
+    } else {
+      // user tick 1 nhóm con => nếu bây giờ tất cả nhóm con đang bật, check placeholder
+      const allOn = Object.values(pipeGroups).every(g => map.hasLayer(g));
+      if (allOn && !map.hasLayer(allPipesPlaceholder)) map.addLayer(allPipesPlaceholder);
+    }
+  });
+  
+  map.on('overlayremove', function(e) {
+    // nếu user un-tick "Tất cả ống"
+    if (e.layer === allPipesPlaceholder) {
+      // tắt tất cả nhóm con
+      Object.values(pipeGroups).forEach(g => { if (map.hasLayer(g)) map.removeLayer(g); });
+    } else {
+      // user un-tick 1 nhóm con => chắc chắn placeholder phải uncheck
+      if (map.hasLayer(allPipesPlaceholder)) map.removeLayer(allPipesPlaceholder);
+    }
+  });
 
   let legendControl = null;
   function updateLegend(show = true) {
