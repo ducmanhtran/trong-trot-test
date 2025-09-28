@@ -155,14 +155,15 @@
 @media (max-width: 768px) {
   #irrigationButtons {
     position: absolute;
-    bottom: 70px;      /* nằm ngay phía trên chú giải ống */
-    right: 10px;
-    top: auto;         /* bỏ top để dùng bottom */
+    bottom: 10px;    
+    right: 300px;
+    top: auto;        
     display: flex;
-    flex-direction: column; /* xếp dọc: nút nhãn ống sẽ nằm trên */
-    gap: 6px;               /* khoảng cách giữa 2 nút */
     z-index: 1000;
   }
+}
+.leaflet-control-layers {
+  margin-left: 100px; /* đẩy control lên trên 80px, tùy chỉnh */
 }
 
 </style>
@@ -218,7 +219,7 @@
   <label for="taskDate" class="date-label">Chọn ngày:</label>
   <input type="date" id="taskDate">
 </div>
-<div id="irrigationButtons">
+<div id="irrigationButtons"style="display:none;">
   <button id="btnTogglePipeLabel">Ẩn nhãn ống</button>
   <button id="btnTogglePebLabel">Ẩn tên PEB</button>
 </div>
@@ -652,7 +653,11 @@ const menuEl = document.querySelector('#menu .menu');
     const overlays = {};
     overlays["Tất cả ống"] = allPipesGroup;
     Object.keys(pipeGroups).forEach(k => overlays[k] = pipeGroups[k]);
-    layerControl = L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(map);
+    layerControl = L.control.layers(null, overlays, {
+      collapsed: false,
+      position: 'bottomleft',
+    }).addTo(map);
+
   }
 
   let legendControl = null;
