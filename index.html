@@ -162,8 +162,8 @@
   }
 .leaflet-control-layers.leaflet-control {
   position: absolute !important;  /* ghi đè vị trí mặc định */
-right: 10px; top: 10px;
-
+  left: 120px;         
+  bottom: 0px !important; 
   min-width: 110px;       /* bảng sẽ luôn ≥ 180px */
   width: 110px !important;/* hoặc dùng hẳn width cố định nếu muốn */
 }
@@ -676,7 +676,7 @@ function updateLayerControl(show = true) {
     "Tuyến nhánh 1": branch1PipesGroup
   };
   console.log('>>> addTo(map) is running', overlays);
-  layerControl = L.control.layers(null, overlays).addTo(map);
+  layerControl = L.control.layers(null, overlays,{ collapsed: false, position: 'bottomleft' }).addTo(map);
 
   // --- Bật/tắt đồng loạt khi tick "Tất cả ống" ---
   function syncAllPipes(status) {
