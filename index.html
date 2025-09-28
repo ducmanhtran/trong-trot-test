@@ -675,7 +675,7 @@ function updateLayerControl(show = true) {
     "Tuyến nhánh": branchPipesGroup,
     "Tuyến nhánh 1": branch1PipesGroup
   };
-
+  console.log('>>> addTo(map) is running', overlays);
   layerControl = L.control.layers(null, overlays).addTo(map);
 
   // --- Bật/tắt đồng loạt khi tick "Tất cả ống" ---
