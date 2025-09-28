@@ -667,7 +667,7 @@ const menuEl = document.querySelector('#menu .menu');
   Object.values(pipeGroups).forEach(g => map.addLayer(g));    // bật từng nhóm con
   map.addLayer(allPipesPlaceholder);                          // tick sẵn “Tất cả ống”
   // lắng nghe khi user tick/un-tick 1 overlay
-  / ====== SỰ KIỆN ĐỒNG BỘ ======
+  // ====== SỰ KIỆN ĐỒNG BỘ ======
 map.on('overlayadd', function (e) {
   if (e.layer === allPipesPlaceholder) {
     Object.values(pipeGroups).forEach(g => { if (!map.hasLayer(g)) map.addLayer(g); });
