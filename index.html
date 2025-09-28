@@ -867,6 +867,10 @@ function drawPipes(rows) {
           });
       }
     });
+  // ✅ Bật mặc định tất cả các nhóm ống
+Object.values(pipeGroups).forEach(g => map.addLayer(g));
+// ✅ Tick sẵn ô "Tất cả ống"
+map.addLayer(allPipesPlaceholder);
 }
     /* ✅ Chỉ thay đổi độ trong suốt tooltip khi zoom */
   map.on('zoomend', updateLabelOpacity);
