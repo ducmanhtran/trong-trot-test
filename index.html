@@ -792,7 +792,7 @@ function drawPipes(rows) {
         
           coords.forEach((latlng, idx) => {
               if (!exclude.has(idx)) {
-                  L.circleMarker(latlng, {
+                  const marker = L.circleMarker(latlng, {
                       radius: 6,
                       color: '#ff0000',
                       fillColor: '#ff0000',
