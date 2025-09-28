@@ -786,7 +786,10 @@ function drawPipes(rows) {
               .map(s => parseInt(s.trim(), 10))
               .filter(n => !isNaN(n));
           const exclude = new Set([0, ...chuyenHuong]);
-    
+          // Bỏ ký tự T đầu tiên, giữ nguyên phần còn lại
+          const idPart = id_tuyen.startsWith('T') ? id_tuyen.slice(1) : id_tuyen;
+          let stt = 1;  // đếm số thứ tự đầu peb trên tuyến
+        
           coords.forEach((latlng, idx) => {
               if (!exclude.has(idx)) {
                   L.circleMarker(latlng, {
@@ -796,6 +799,17 @@ function drawPipes(rows) {
                       fillOpacity: 1,
                       weight: 2
                   }).addTo(pebGroup);
+                  // Tên đầu peb: "P." + (phần sau T) + "." + stt
+                  // Ví dụ: id_tuyen = "T01-1.8", stt = 2 → "P.01-1.8.2"
+                  const maPeb = `P.${idPart}.${stt}`;
+                      marker.bindTooltip(maPeb, {
+                      permanent: true,
+                      direction: 'center',
+                      className: 'peb-label',
+                      opacity: 0
+                  });
+          
+                  stt++;
               }
           });
       }
