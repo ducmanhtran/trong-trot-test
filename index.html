@@ -143,7 +143,21 @@
     background: url('https://github.com/ducmanhtran/trong-trot-test/blob/main/arrow-blue.svg') center/contain no-repeat;
     display: block;
 }
+#irrigationButtons {
+    position: absolute;
+    top: 10px;       /* vị trí mặc định cho desktop */
+    right: 10px;
+    z-index: 1000;
+}
 
+/* 👉 Khi trên điện thoại (màn hình nhỏ) */
+@media (max-width: 768px) {
+    #irrigationButtons {
+        top: auto;               /* bỏ top */
+        bottom: 70px;            /* cách mép dưới 70px (tùy bạn) */
+        right: 10px;             /* hoặc left:10px nếu muốn bên trái */
+    }
+}
 </style>
 </head>
 <body>
@@ -197,7 +211,7 @@
   <label for="taskDate" class="date-label">Chọn ngày:</label>
   <input type="date" id="taskDate">
 </div>
-<div id="irrigationButtons" style="display:none;position:absolute;top:10px;right:10px;z-index:1000;">
+<div id="irrigationButtons">
   <button id="btnTogglePipeLabel">Ẩn nhãn ống</button>
   <button id="btnTogglePebLabel">Ẩn tên PEB</button>
 </div>
