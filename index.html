@@ -151,20 +151,23 @@
 }
 
 /* 👉 Khi trên điện thoại (màn hình nhỏ) */
-/* 👉 Chỉ áp dụng khi màn hình nhỏ (điện thoại) */
 @media (max-width: 768px) {
   #irrigationButtons {
-    position: absolute;
-    bottom: 10px;    
-    right: 300px;
-    top: auto;        
-    display: flex;
-    z-index: 1000;
+    top: 10px;                 /* khoảng cách từ viền trên */
+    left: 50%;                 /* canh giữa theo chiều ngang */
+    transform: translateX(-50%); /* dịch lại 1/2 chiều rộng để đúng chính giữa */
+    right: auto;               /* bỏ định vị right */
+    display: flex;             /* để xếp hai nút theo chiều ngang */
+    gap: 8px;                  /* khoảng cách giữa 2 nút */
   }
+.leaflet-control-layers.leaflet-control {
+  position: absolute !important;  /* ghi đè vị trí mặc định */
+  left: 50% !important;           /* đẩy về giữa theo chiều ngang */
+  bottom: 10px !important;        /* khoảng cách mép dưới (tùy chỉnh) */
+  transform: translateX(-50%);    /* căn chính giữa thật sự */
+  z-index: 1000;                  /* đảm bảo nằm trên cùng */
 }
-.leaflet-control-layers {
-  margin-left: 100px; /* đẩy control lên trên 80px, tùy chỉnh */
-}
+
 
 </style>
 </head>
