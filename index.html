@@ -151,13 +151,34 @@
 }
 
 /* 👉 Khi trên điện thoại (màn hình nhỏ) */
+/* 👉 Chỉ áp dụng khi màn hình nhỏ (điện thoại) */
 @media (max-width: 768px) {
-    #irrigationButtons {
-        top: auto;               /* bỏ top */
-        bottom: 70px;            /* cách mép dưới 70px (tùy bạn) */
-        right: 10px;             /* hoặc left:10px nếu muốn bên trái */
-    }
+  #irrigationButtons {
+    position: absolute;
+    bottom: 70px;      /* nằm ngay phía trên chú giải ống */
+    right: 10px;
+    top: auto;         /* bỏ top để dùng bottom */
+    display: flex;
+    flex-direction: column; /* xếp dọc: nút nhãn ống sẽ nằm trên */
+    gap: 6px;               /* khoảng cách giữa 2 nút */
+    z-index: 1000;
+  }
+
+  #irrigationButtons button {
+    width: 140px;   /* 👉 cùng chiều rộng */
+    height: 36px;   /* 👉 cùng chiều cao */
+    font-size: 14px;
+    background: #fff;
+    border: 1px solid #999;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  #irrigationButtons button:hover {
+    background: #f0f0f0;
+  }
 }
+
 </style>
 </head>
 <body>
@@ -675,9 +696,6 @@ const menuEl = document.querySelector('#menu .menu');
                     <span style="width:12px;height:12px;display:inline-block;background:blue;margin-right:8px;border-radius:50%;border:1px solid #004"></span>
                     <span>Trạm bơm</span>
                  </div>`;
-      html += `<div style="margin-top:6px;font-size:12px;">
-                <i>Nét đứt = gang; liền = HDPE (mặc định)</i>
-               </div>`;
       div.innerHTML = html;
       return div;
     };
