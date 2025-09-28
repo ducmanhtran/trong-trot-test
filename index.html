@@ -834,6 +834,11 @@ function drawPipes(rows) {
                 opacity: z >= showZoom ? 1 : 0,
                 fillOpacity: z >= showZoom ? 1 : 0
               });
+          // ✅ đổi opacity cho tooltip của peb
+          if (layer.getTooltip && layer.getTooltip()) {
+              const el = layer.getTooltip().getElement();
+              if (el) el.style.opacity = (z >= showZoom ? 1 : 0);
+        }
           });
         });
 
