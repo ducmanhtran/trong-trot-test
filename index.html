@@ -648,6 +648,7 @@ const menuEl = document.querySelector('#menu .menu');
   let irrigationVisible = false;   // trạng thái đang hiển thị hay không
   let layerControl = null;
  // tạo placeholder (không chứa các polyline thật)
+// tạo placeholder (không chứa các polyline thật)
   const allPipesPlaceholder = L.layerGroup(); // rỗng
   
   function updateLayerControl(show = true) {
@@ -663,29 +664,30 @@ const menuEl = document.querySelector('#menu .menu');
   
     layerControl = L.control.layers(null, overlays, { collapsed: false, position: 'bottomleft' }).addTo(map);
   }
-  // ====== BẬT MẶC ĐỊNH ======
-  Object.values(pipeGroups).forEach(g => map.addLayer(g));    // bật từng nhóm con
-  map.addLayer(allPipesPlaceholder);                          // tick sẵn “Tất cả ống”
+  
   // lắng nghe khi user tick/un-tick 1 overlay
-  // ====== SỰ KIỆN ĐỒNG BỘ ======
-map.on('overlayadd', function (e) {
-  if (e.layer === allPipesPlaceholder) {
-    Object.values(pipeGroups).forEach(g => { if (!map.hasLayer(g)) map.addLayer(g); });
-  } else {
-    // khi người dùng bật thủ công từng nhóm con, nếu tất cả đã bật thì tick placeholder
-    const allOn = Object.values(pipeGroups).every(g => map.hasLayer(g));
-    if (allOn && !map.hasLayer(allPipesPlaceholder)) map.addLayer(allPipesPlaceholder);
-  }
-});
-
-map.on('overlayremove', function (e) {
-  if (e.layer === allPipesPlaceholder) {
-    Object.values(pipeGroups).forEach(g => { if (map.hasLayer(g)) map.removeLayer(g); });
-  } else {
-    // khi tắt một nhóm con, bỏ tick placeholder
-    if (map.hasLayer(allPipesPlaceholder)) map.removeLayer(allPipesPlaceholder);
-  }
-});
+  map.on('overlayadd', function(e) {
+    // nếu user tick "Tất cả ống"
+    if (e.layer === allPipesPlaceholder) {
+      // bật tất cả nhóm con
+      Object.values(pipeGroups).forEach(g => { if (!map.hasLayer(g)) map.addLayer(g); });
+    } else {
+      // user tick 1 nhóm con => nếu bây giờ tất cả nhóm con đang bật, check placeholder
+      const allOn = Object.values(pipeGroups).every(g => map.hasLayer(g));
+      if (allOn && !map.hasLayer(allPipesPlaceholder)) map.addLayer(allPipesPlaceholder);
+    }
+  });
+  
+  map.on('overlayremove', function(e) {
+    // nếu user un-tick "Tất cả ống"
+    if (e.layer === allPipesPlaceholder) {
+      // tắt tất cả nhóm con
+      Object.values(pipeGroups).forEach(g => { if (map.hasLayer(g)) map.removeLayer(g); });
+    } else {
+      // user un-tick 1 nhóm con => chắc chắn placeholder phải uncheck
+      if (map.hasLayer(allPipesPlaceholder)) map.removeLayer(allPipesPlaceholder);
+    }
+  });
 
   let legendControl = null;
   function updateLegend(show = true) {
