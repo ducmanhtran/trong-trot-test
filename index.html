@@ -197,7 +197,10 @@
   <label for="taskDate" class="date-label">Chọn ngày:</label>
   <input type="date" id="taskDate">
 </div>
-
+<div id="irrigationButtons" style="display:none;position:absolute;top:10px;right:10px;z-index:1000;">
+  <button id="btnTogglePipeLabel">Ẩn nhãn ống</button>
+  <button id="btnTogglePebLabel">Ẩn tên PEB</button>
+</div>
 <script>
 window.onload = function () {
   // URLs
@@ -873,6 +876,33 @@ function drawPipes(rows) {
 
 // Nút Hệ thống tưới: click mới bật
 // ⚠️ khai báo biến toàn cục
+let pipeLabelVisible = true;
+let pebLabelVisible = true;
+
+document.getElementById('btnTogglePipeLabel').addEventListener('click', () => {
+    pipeLabelVisible = !pipeLabelVisible;
+    irrigationGroup.eachLayer(function(layer){
+        if (layer instanceof L.Tooltip) {
+            const el = layer.getElement && layer.getElement();
+            if (el) el.style.opacity = pipeLabelVisible ? 1 : 0;
+        }
+    });
+    document.getElementById('btnTogglePipeLabel').innerText =
+        pipeLabelVisible ? "Ẩn nhãn ống" : "Hiện nhãn ống";
+});
+
+document.getElementById('btnTogglePebLabel').addEventListener('click', () => {
+    pebLabelVisible = !pebLabelVisible;
+    pebGroup.eachLayer(function(layer){
+        if (layer.getTooltip) {
+            const tt = layer.getTooltip();
+            const el = tt && tt.getElement && tt.getElement();
+            if (el) el.style.opacity = pebLabelVisible ? 1 : 0;
+        }
+    });
+    document.getElementById('btnTogglePebLabel').innerText =
+        pebLabelVisible ? "Ẩn tên PEB" : "Hiện tên PEB";
+});
 
 
 document.getElementById('btnIrrigation').addEventListener('click', function () {
@@ -890,6 +920,7 @@ document.getElementById('btnIrrigation').addEventListener('click', function () {
      if (allPipesGroup.getLayers().length > 0) {
      const bounds = allPipesGroup.getBounds();
      if (bounds.isValid()) map.fitBounds(bounds.pad(0.1));
+     document.getElementById('irrigationButtons').style.display = 'block';
     }
 });
 
@@ -905,6 +936,7 @@ document.querySelectorAll('#menu .final-item:not(#btnIrrigation)').forEach(subBt
             updateLayerControl(false);    // ẩn quản lý hiện thị ống
             hideIrrigation();
             irrigationVisible = false;          // cập nhật trạng thái
+            document.getElementById('irrigationButtons').style.display = 'none';
 
         // Đóng menu mobile như cũ
         if (window.innerWidth <= 768) {
