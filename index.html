@@ -648,41 +648,78 @@ const menuEl = document.querySelector('#menu .menu');
   let irrigationVisible = false;   // trạng thái đang hiển thị hay không
   let layerControl = null;
   let legendControl = null;
-  const allPipesPlaceholder = L.layerGroup(); // rỗng
-    function updateLayerControl(show = true) {
+  // --- Layer nhóm ---
+  const mainPipesGroup = L.layerGroup();    // Tuyến chính
+  const branchPipesGroup = L.layerGroup();  // Tuyến nhánh
+  const branch1PipesGroup = L.layerGroup(); // Tuyến nhánh 1
+  
+  // --- Placeholder cho "Tất cả ống" ---
+  // Ta sẽ dùng một layerGroup rỗng nhưng thêm một marker ẩn để Leaflet nhận sự kiện
+  const allPipesPlaceholder = L.layerGroup([L.marker([0,0], {opacity:0})]);
+  
+  // --- Layer nhóm (tạo 1 lần, global) ---
+  const mainPipesGroup = L.layerGroup();    // Tuyến chính
+  const branchPipesGroup = L.layerGroup();  // Tuyến nhánh
+  const branch1PipesGroup = L.layerGroup(); // Tuyến nhánh 1
+  
+  // --- Placeholder cho "Tất cả ống" ---
+  const allPipesPlaceholder = L.layerGroup(); // Layer rỗng, chỉ để hiển thị checkbox
+  
+  let layerControl = null;
+  
+  // --- Hàm update LayerControl ---
+  function updateLayerControl(show = true) {
+    // Xóa LayerControl cũ nếu có
     if (layerControl) {
       map.removeControl(layerControl);
       layerControl = null;
     }
     if (!show) return;
   
-    // overlays: placeholder cho "Tất cả ống" + từng nhóm thực tế
-    const overlays = { "Tất cả ống": allPipesPlaceholder };
-    Object.keys(pipeGroups).forEach(k => overlays[k] = pipeGroups[k]);
+    // --- Tạo overlays mới ---
+    const overlays = {
+      "Tất cả ống": allPipesPlaceholder,
+      "Tuyến chính": mainPipesGroup,
+      "Tuyến nhánh": branchPipesGroup,
+      "Tuyến nhánh 1": branch1PipesGroup
+    };
   
-    layerControl = L.control.layers(null, overlays, { collapsed: false, position: 'bottomleft' }).addTo(map);
+    layerControl = L.control.layers(null, overlays).addTo(map);
+  
+    // --- Đồng bộ khi bật/tắt "Tất cả ống" ---
+    function syncAllPipes(status) {
+      const groups = [mainPipesGroup, branchPipesGroup, branch1PipesGroup];
+      groups.forEach(group => {
+        if (status && !map.hasLayer(group)) map.addLayer(group);
+        if (!status && map.hasLayer(group)) map.removeLayer(group);
+      });
+    }
+  
+    map.on('overlayadd', function(e) {
+      if (e.name === 'Tất cả ống') syncAllPipes(true);
+    });
+  
+    map.on('overlayremove', function(e) {
+      if (e.name === 'Tất cả ống') syncAllPipes(false);
+    });
+  
+    // --- Đồng bộ checkbox "Tất cả ống" nếu bật/tắt từng tuyến riêng ---
+    function updateAllPipesCheckbox() {
+      const allVisible = map.hasLayer(mainPipesGroup) &&
+                         map.hasLayer(branchPipesGroup) &&
+                         map.hasLayer(branch1PipesGroup);
+      const checkbox = document.querySelector('.leaflet-control-layers-overlays input[title="Tất cả ống"]');
+      if (checkbox) checkbox.checked = allVisible;
+    }
+  
+    [mainPipesGroup, branchPipesGroup, branch1PipesGroup].forEach(group => {
+      group.on('add remove', updateAllPipesCheckbox);
+    });
+  
+    // --- Cập nhật lần đầu ---
+    updateAllPipesCheckbox();
   }
-  Object.values(pipeGroups).forEach(g => map.addLayer(g));    // bật từng nhóm con
-  map.addLayer(allPipesPlaceholder);                          // tick sẵn “Tất cả ống”
- // ====== SỰ KIỆN ĐỒNG BỘ ======
-  map.on('overlayadd', function (e) {
-    if (e.layer === allPipesPlaceholder) {
-      Object.values(pipeGroups).forEach(g => { if (!map.hasLayer(g)) map.addLayer(g); });
-    } else {
-      // khi người dùng bật thủ công từng nhóm con, nếu tất cả đã bật thì tick placeholder
-      const allOn = Object.values(pipeGroups).every(g => map.hasLayer(g));
-      if (allOn && !map.hasLayer(allPipesPlaceholder)) map.addLayer(allPipesPlaceholder);
-    }
-  });
-  
-  map.on('overlayremove', function (e) {
-    if (e.layer === allPipesPlaceholder) {
-      Object.values(pipeGroups).forEach(g => { if (map.hasLayer(g)) map.removeLayer(g); });
-    } else {
-      // khi tắt một nhóm con, bỏ tick placeholder
-      if (map.hasLayer(allPipesPlaceholder)) map.removeLayer(allPipesPlaceholder);
-    }
-  });
+
 
   function updateLegend(show = true) {
     if (legendControl) map.removeControl(legendControl);
