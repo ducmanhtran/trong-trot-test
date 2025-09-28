@@ -162,8 +162,10 @@
   }
 .leaflet-control-layers.leaflet-control {
   position: absolute !important;  /* ghi đè vị trí mặc định */
-  left: 100px;         
-  bottom: 0px !important;       
+  left: 120px;         
+  bottom: 0px !important;  
+  min-width: 180px;       /* bảng sẽ luôn ≥ 180px */
+  width: 180px !important;/* hoặc dùng hẳn width cố định nếu muốn */
 }
 
 
