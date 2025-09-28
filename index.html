@@ -648,11 +648,7 @@ const menuEl = document.querySelector('#menu .menu');
   let irrigationVisible = false;   // trạng thái đang hiển thị hay không
   let layerControl = null;
   let legendControl = null;
-  // --- Layer nhóm ---
-  const mainPipesGroup = L.layerGroup();    // Tuyến chính
-  const branchPipesGroup = L.layerGroup();  // Tuyến nhánh
-  const branch1PipesGroup = L.layerGroup(); // Tuyến nhánh 1
-  
+ 
   // --- Placeholder cho "Tất cả ống" ---
   // Ta sẽ dùng một layerGroup rỗng nhưng thêm một marker ẩn để Leaflet nhận sự kiện
   const allPipesPlaceholder = L.layerGroup([L.marker([0,0], {opacity:0})]);
