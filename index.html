@@ -239,7 +239,8 @@ window.onload = function () {
         enableHighAccuracy: true // bật GPS chính xác cao (nếu thiết bị hỗ trợ)
     }
   }).addTo(map);
-
+  let pipeLabelVisible = true;
+  let pebLabelVisible = true;
   const cropsGroup = L.layerGroup().addTo(map);
   const companyLegalGroup = L.layerGroup();
   const actualLotsGroup = L.layerGroup();
@@ -819,31 +820,31 @@ function drawPipes(rows) {
     });
 }
     /* ✅ Chỉ thay đổi độ trong suốt tooltip khi zoom */
-    map.on('zoomend', function () {
-        const z = map.getZoom();
-        const showZoom = 17;
-        irrigationGroup.eachLayer(function (layer) {
-            if (layer instanceof L.Tooltip) {
-                var el = layer.getElement && layer.getElement();
-                if (el) {
-                    el.style.opacity = (z >= showZoom ? 1 : 0);
-                }
-            }
-        });
-      
-        // Hiển thị/ẩn chấm đỏ đầu PEB
-        pebGroup.eachLayer(function(layer) {
-            layer.setStyle({
-                opacity: z >= showZoom ? 1 : 0,
-                fillOpacity: z >= showZoom ? 1 : 0
-              });
-          // ✅ đổi opacity cho tooltip của peb
-          if (layer.getTooltip && layer.getTooltip()) {
-              const el = layer.getTooltip().getElement();
-              if (el) el.style.opacity = (z >= showZoom ? 1 : 0);
-        }
-          });
-        });
+  map.on('zoomend', updateLabelOpacity);
+
+  function updateLabelOpacity() {
+      const z = map.getZoom();
+      const showZoom = 17;
+  
+      // --- nhãn ống ---
+      irrigationGroup.eachLayer(function (layer) {
+          if (layer instanceof L.Tooltip) {
+              const el = layer.getElement && layer.getElement();
+              if (el) {
+                  el.style.opacity = (z >= showZoom && pipeLabelVisible) ? 1 : 0;
+              }
+          }
+      });
+  
+      // --- tên PEB ---
+      pebGroup.eachLayer(function(layer) {
+          const tt = layer.getTooltip && layer.getTooltip();
+          const el = tt && tt.getElement && tt.getElement();
+          if (el) {
+              el.style.opacity = (z >= showZoom && pebLabelVisible) ? 1 : 0;
+          }
+      });
+  }
 
   // ❗ Chỉ nạp dữ liệu, KHÔNG tự add allPipesGroup
   fetch(sheetUrl).then(r => r.text()).then(text => {
@@ -876,8 +877,7 @@ function drawPipes(rows) {
 
 // Nút Hệ thống tưới: click mới bật
 // ⚠️ khai báo biến toàn cục
-let pipeLabelVisible = true;
-let pebLabelVisible = true;
+
 
 document.getElementById('btnTogglePipeLabel').addEventListener('click', () => {
     pipeLabelVisible = !pipeLabelVisible;
