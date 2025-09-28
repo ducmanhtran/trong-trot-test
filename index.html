@@ -658,15 +658,12 @@ const menuEl = document.querySelector('#menu .menu');
     if (!show) return;
   
     // overlays: placeholder cho "Tất cả ống" + từng nhóm thực tế
-    const allPipesPlaceholder = L.layerGroup(); 
     const overlays = { "Tất cả ống": allPipesPlaceholder };
     Object.keys(pipeGroups).forEach(k => overlays[k] = pipeGroups[k]);
   
     layerControl = L.control.layers(null, overlays, { collapsed: false, position: 'bottomleft' }).addTo(map);
   }
-  // ✅ Bật mặc định tất cả các nhóm con và placeholder
-  Object.values(pipeGroups).forEach(g => { if (!map.hasLayer(g)) map.addLayer(g); });
-  if (!map.hasLayer(allPipesPlaceholder)) map.addLayer(allPipesPlaceholder);
+
   // lắng nghe khi user tick/un-tick 1 overlay
   map.on('overlayadd', function(e) {
     // nếu user tick "Tất cả ống"
