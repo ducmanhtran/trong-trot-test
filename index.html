@@ -646,7 +646,7 @@ const menuEl = document.querySelector('#menu .menu');
   const allPipesGroup = L.featureGroup(); // ❗ KHÔNG .addTo(map) ở đây
   const pipeGroups = {};
   let irrigationVisible = false;   // trạng thái đang hiển thị hay không
-  
+  let layerControl = null;
   let legendControl = null;
   const allPipesPlaceholder = L.layerGroup(); // rỗng
     function updateLayerControl(show = true) {
