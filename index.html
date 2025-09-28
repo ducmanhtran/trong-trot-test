@@ -835,6 +835,7 @@ function drawPipes(rows) {
   
       // --- tên PEB ---
       pebGroup.eachLayer(function(layer) {
+          layer.setStyle({ opacity: z >= showZoom ? 1 : 0,fillOpacity: z >= showZoom ? 1 : 0 });
           const tt = layer.getTooltip && layer.getTooltip();
           const el = tt && tt.getElement && tt.getElement();
           if (el) {
