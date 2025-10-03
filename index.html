@@ -264,8 +264,8 @@ window.onload = function () {
         enableHighAccuracy: true // bật GPS chính xác cao (nếu thiết bị hỗ trợ)
     }
   }).addTo(map);
-  let pipeLabelVisible = true;
-  let pebLabelVisible = true;
+  let pipeLabelVisible = false;
+  let pebLabelVisible = false;
   const cropsGroup = L.layerGroup().addTo(map);
   const companyLegalGroup = L.layerGroup();
   const actualLotsGroup = L.layerGroup();
