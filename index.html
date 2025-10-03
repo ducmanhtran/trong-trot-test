@@ -647,10 +647,9 @@ const menuEl = document.querySelector('#menu .menu');
   const pipeGroups = {};
   let irrigationVisible = false;   // trạng thái đang hiển thị hay không
   let layerControl = null;
-  // tạo placeholder (không chứa các polyline thật)
+  let legendControl = null;
   const allPipesPlaceholder = L.layerGroup(); // rỗng
-  
-  function updateLayerControl(show = true) {
+    function updateLayerControl(show = true) {
     if (layerControl) {
       map.removeControl(layerControl);
       layerControl = null;
@@ -688,7 +687,6 @@ const menuEl = document.querySelector('#menu .menu');
     }
   });
 
-  let legendControl = null;
   function updateLegend(show = true) {
     if (legendControl) map.removeControl(legendControl);
     legendControl = null;
@@ -866,10 +864,6 @@ function drawPipes(rows) {
           });
       }
     });
-  // ✅ Bật mặc định tất cả các nhóm ống
-Object.values(pipeGroups).forEach(g => map.addLayer(g));
-// ✅ Tick sẵn ô "Tất cả ống"
-map.addLayer(allPipesPlaceholder);
 }
     /* ✅ Chỉ thay đổi độ trong suốt tooltip khi zoom */
   map.on('zoomend', updateLabelOpacity);
@@ -1004,10 +998,3 @@ document.querySelectorAll('#menu .final-item:not(#btnIrrigation)').forEach(subBt
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
