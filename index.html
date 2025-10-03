@@ -167,6 +167,16 @@
   min-width: 110px;       /* bảng sẽ luôn ≥ 180px */
   width: 110px !important;/* hoặc dùng hẳn width cố định nếu muốn */
 }
+#btnTogglePanels {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  background: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
 
 
 </style>
@@ -226,6 +236,7 @@
   <button id="btnTogglePipeLabel">Hiện nhãn ống</button>
   <button id="btnTogglePebLabel">Hiện tên PEB</button>
 </div>
+ <button id="btnTogglePanels">📑 Hiện bảng</button>
 <script>
 window.onload = function () {
   // URLs
@@ -776,6 +787,20 @@ const menuEl = document.querySelector('#menu .menu');
     return 6;
   }
 
+let panelsVisible = false;
+
+document.getElementById("btnTogglePanels").addEventListener("click", function() {
+  if (!panelsVisible) {
+    updateLegend(true);
+    updateLayerControl(true);
+    this.innerText = "📑 Ẩn bảng";
+    panelsVisible = true;
+  } else {
+    hideLegendAndLayerControl();
+    this.innerText = "📑 Hiện bảng";
+    panelsVisible = false;
+  }
+});
 
 
 function drawPipes(rows) {
