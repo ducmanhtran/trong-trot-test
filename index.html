@@ -171,6 +171,7 @@
   position: absolute !important;
   bottom: 30px;
   right: 60px;
+  font-size:14px;
   z-index: 1000;
   background: white;
   padding: 6px 10px;
@@ -987,8 +988,8 @@ document.getElementById('btnIrrigation').addEventListener('click', function () {
     // Bật / tắt nhóm hệ thống tưới
      showIrrigation();               // ← giữ nguyên hàm cũ của bạn
      map.addLayer(irrigationGroup);  // bật toàn bộ layer ống + nhãn
-     updateLegend(true);     // bật chú giải ống
-     updateLayerControl(true); //bật quản lý hiển thị ống
+     updateLegend(false);     // bật chú giải ống
+     updateLayerControl(false); //bật quản lý hiển thị ống
      if (allPipesGroup.getLayers().length > 0) {
      const bounds = allPipesGroup.getBounds();
      if (bounds.isValid()) map.fitBounds(bounds.pad(0.1));
