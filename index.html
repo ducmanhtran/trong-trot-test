@@ -161,12 +161,25 @@
     display: flex;             /* để xếp hai nút theo chiều ngang */
     gap: 8px;                  /* khoảng cách giữa 2 nút */
   }
-.leaflet-control-layers.leaflet-control {
-  position: absolute !important;  /* ghi đè vị trí mặc định */
-  left: 120px;         
-  bottom: 0px !important;  
-  min-width: 110px;       /* bảng sẽ luôn ≥ 180px */
-  width: 110px !important;/* hoặc dùng hẳn width cố định nếu muốn */
+.leaflet-control-layers.base-map-control {
+  position: absolute !important;
+  top: 10px !important;
+  right: 10px !important;
+  left: auto !important;
+  bottom: auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  z-index: 1100 !important;
+}
+
+.leaflet-control-layers.base-map-control .leaflet-control-layers-list {
+  min-width: 145px;
+}
+
+.leaflet-control-layers.base-map-control > a {
+  width: 34px !important;
+  height: 34px !important;
+  line-height: 34px !important;
 }
 #btnTogglePanels {
   position: absolute !important;
@@ -310,6 +323,10 @@ window.onload = function () {
     position: 'topright',
     collapsed: true
   }).addTo(map);
+
+  // Đánh dấu riêng nút chuyển Bản đồ / Vệ tinh để CSS mobile
+  // không nhầm với bảng quản lý các tuyến ống tưới.
+  baseControl.getContainer().classList.add('base-map-control');
 
   // Thông báo rõ nếu tile nền không tải được.
   const baseMapStatus = L.control({position: 'topleft'});
