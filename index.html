@@ -6,11 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <link rel="apple-touch-icon" sizes="192x192" href="https://github.com/ducmanhtran/trong-trot-test/blob/main/icon1.png?raw=true">
-  <link rel="icon" type="image/png" sizes="192x192" href="https://github.com/ducmanhtran/trong-trot-test/blob/main/icon1.png?raw=true">
-    <!-- Leaflet Locate CSS & JS (CDN) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
-  <script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
   <style>
 /* ===== MENU ===== */
 #menu{background:linear-gradient(90deg,#007bff,#0056b3);box-shadow:0 2px 6px rgba(0,0,0,0.25);position:relative;z-index:1000;font-family:Arial,sans-serif}
@@ -64,8 +59,8 @@
 #footerTitle{position:fixed;bottom:0;left:0;width:100%;margin:0;padding:4px 6px;background:rgba(255,255,255,0.85);text-align:center;font-size:13px;box-shadow:0 -1px 4px rgba(0,0,0,0.15);z-index:1000}
 /* ===== LABEL & TOGGLE ===== */
 .custom-label{font-weight:200;font-size:13px;color:#000;text-align:center;white-space:nowrap}
-.toggle-labels-btn, .toggle-color-btn{background:#fff;border:1px solid #bbb;border-radius:6px;padding:6px 10px;font-size:14px;cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,0.15);margin-bottom:40px}
-.toggle-labels-btn:hover, .toggle-color-btn:hover{background:#f0f0f0}
+.toggle-labels-btn{background:#fff;border:1px solid #bbb;border-radius:6px;padding:6px 10px;font-size:14px;cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,0.15);margin-bottom:40px}
+.toggle-labels-btn:hover{background:#f0f0f0}
 #infoBox{position:fixed;bottom:40px;left:10px;background:rgba(255,255,255,0.9);border:1px solid #ccc;padding:8px 12px;font-size:14px;font-weight:bold;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,0.2);z-index:1200;display:none}
 /* ===== TASK PANEL ===== */
 #taskPanel{position:fixed;top:60px;right:10px;width:280px;background:rgba(255,255,255,0.95);border:1px solid #ccc;padding:10px;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,0.2);z-index:1200;display:none}
@@ -119,67 +114,8 @@
   color: blue !important;
   }
 /* Mặc định trên mọi thiết bị */
-}
-.pipe-label {
-  font-weight: bold;
-  color: #0000ff;              /* màu chữ dễ nhìn */
-  background: rgba(255,255,255,0.7);
-  border: none;
-  box-shadow: none;
-  font-size: 14px;
-}
-.leaflet-tooltip.pipe-label { opacity:0; }
-/* Ẩn hoàn toàn icon gốc của plugin */
-.leaflet-control-locate.leaflet-bar a::before,
-.leaflet-control-locate a::before {
-    content: none !important;
-    background: none !important;
-    box-shadow: none !important; /* phòng khi plugin dùng shadow cho icon */
-}
-.leaflet-control-locate a::after {
-    content: "";
-    width: 18px;
-    height: 18px;
-    background: url('https://github.com/ducmanhtran/trong-trot-test/blob/main/arrow-blue.svg') center/contain no-repeat;
-    display: block;
-}
-#irrigationButtons {
-    position: absolute;
-    top: 10px;       /* vị trí mặc định cho desktop */
-    right: 10px;
-    z-index: 1000;
-}
 
-/* 👉 Khi trên điện thoại (màn hình nhỏ) */
-@media (max-width: 768px) {
-  #irrigationButtons {
-    top: 10px;                 /* khoảng cách từ viền trên */
-    left: 50%;                 /* canh giữa theo chiều ngang */
-    transform: translateX(-50%); /* dịch lại 1/2 chiều rộng để đúng chính giữa */
-    right: auto;               /* bỏ định vị right */
-    display: flex;             /* để xếp hai nút theo chiều ngang */
-    gap: 8px;                  /* khoảng cách giữa 2 nút */
-  }
-.leaflet-control-layers.leaflet-control {
-  position: absolute !important;  /* ghi đè vị trí mặc định */
-  left: 120px;         
-  bottom: 0px !important;  
-  min-width: 110px;       /* bảng sẽ luôn ≥ 180px */
-  width: 110px !important;/* hoặc dùng hẳn width cố định nếu muốn */
 }
-#btnTogglePanels {
-  position: absolute !important;
-  bottom: 30px;
-  right: 60px;
-  font-size:14px;
-  z-index: 1000;
-  background: white;
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-
 </style>
 </head>
 <body>
@@ -205,7 +141,7 @@
     <li>
       <button aria-haspopup="true">🏗️ Hạ tầng ▾</button>
       <ul class="submenu">
-        <li><button id="btnIrrigation" class="final-item">💧 Hệ thống tưới</button></li>
+        <li><button class="final-item">💧 Hệ thống tưới</button></li>
         <li><button class="final-item">🚜 Máy móc</button></li>
       </ul>
     </li>
@@ -233,11 +169,7 @@
   <label for="taskDate" class="date-label">Chọn ngày:</label>
   <input type="date" id="taskDate">
 </div>
-<div id="irrigationButtons"style="display:none;">
-  <button id="btnTogglePipeLabel">Hiện nhãn ống</button>
-  <button id="btnTogglePebLabel">Hiện tên PEB</button>
-</div>
- <button id="btnTogglePanels">📑 Hiện bảng</button>
+
 <script>
 window.onload = function () {
   // URLs
@@ -249,8 +181,6 @@ window.onload = function () {
   // state
   let rowsData = [];
   let polygons = [];
-  let colorHidden = false;          // trạng thái ẩn màu
-  let originalStyles = new Map();   // lưu style gốc của từng polygon
   let labelsVisible = false;
   let taskData = [];
   let highlightLayers = [];
@@ -264,27 +194,12 @@ window.onload = function () {
   const map = L.map('map', { center: [17.5089721, 106.4670833], zoom: 13, zoomControl: false });
   L.control.zoom({ position: 'bottomright' }).addTo(map);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
-  L.control.locate({
-    position: 'topright',        // vị trí nút trên bản đồ: 'topleft','topright','bottomleft','bottomright'
-    strings: {
-        title: "Định vị vệ tinh" // tooltip khi rê chuột
-    },
-    flyTo: true,                // map tự động bay (animate) đến vị trí
-    keepCurrentZoomLevel: false,// zoom đến mức phù hợp với độ chính xác GPS
-    showPopup: true,            // hiện popup với độ chính xác
-    locateOptions: {
-        enableHighAccuracy: true // bật GPS chính xác cao (nếu thiết bị hỗ trợ)
-    }
-  }).addTo(map);
-  let pipeLabelVisible = false;
-  let pebLabelVisible = false;
+
   const cropsGroup = L.layerGroup().addTo(map);
   const companyLegalGroup = L.layerGroup();
   const actualLotsGroup = L.layerGroup();
   const disputedGroup = L.layerGroup();
   const highlightGroup = L.layerGroup().addTo(map);
-  const irrigationGroup = L.layerGroup(); // nhóm Hệ thống tưới
-  irrigationGroup.remove(); // Ẩn mặc định
 
   // toggle nhãn
   const toggleBtn = L.control({ position: 'bottomright' });
@@ -299,44 +214,6 @@ window.onload = function () {
     return btn;
   };
   toggleBtn.addTo(map);
-  // toggle màu
-  const toggleColorBtn = L.control({ position: 'bottomright' });
-  toggleColorBtn.onAdd = function () {
-    const btn = L.DomUtil.create('button', 'toggle-color-btn');
-    btn.innerHTML = '🎨 Ẩn màu';
-    btn.onclick = function () {
-      colorHidden = !colorHidden;
-  
-      polygons.forEach(p => {
-        if (colorHidden) {
-          // lưu style gốc nếu chưa có
-          if (!originalStyles.has(p)) {
-            originalStyles.set(p, {
-              color: p.options.color,
-              weight: p.options.weight,
-              fillColor: p.options.fillColor,
-              fillOpacity: p.options.fillOpacity
-            });
-          }
-          // áp style xám
-          p.setStyle({
-            color: "#CCFFCC",       // viền xanh lam mỏng
-            weight: 0.5,
-            fillColor: "#CCFFCC",
-            fillOpacity: 0.6
-          });
-        } else {
-          // khôi phục style gốc
-          const st = originalStyles.get(p);
-          if (st) p.setStyle(st);
-        }
-      });
-  
-      btn.innerHTML = colorHidden ? '🎨 Hiện màu' : '🎨 Ẩn màu';
-    };
-    return btn;
-  };
-  toggleColorBtn.addTo(map);
 
   // helpers parse
   function parseDate_fromSheet(str) {
@@ -530,7 +407,6 @@ window.onload = function () {
   const taskListDiv = document.getElementById('taskList');
 
   document.getElementById('dailyTaskBtn').addEventListener('click', function () {
-    drawCrops('all');
     if (!anyLegalChecked() && !map.hasLayer(cropsGroup)) map.addLayer(cropsGroup);
     const now = new Date(); const yyyy = now.getFullYear(); const mm = String(now.getMonth() + 1).padStart(2, '0'); const dd = String(now.getDate()).padStart(2, '0');
     taskDateInput.value = `${yyyy}-${mm}-${dd}`;
@@ -568,6 +444,15 @@ window.onload = function () {
     });
   }
 
+  function updateTaskPanelTitle(selectedDate) {
+    if (!selectedDate) return;
+    const today = new Date(); today.setHours(0, 0, 0, 0); selectedDate.setHours(0, 0, 0, 0);
+    const suffix = selectedDate > today ? ' (dự kiến)' : '';
+    const dd = String(selectedDate.getDate()).padStart(2, '0');
+    const mm = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const yyyy = selectedDate.getFullYear();
+    document.getElementById('taskPanelTitle').textContent = 'Công việc ngày ' + dd + '/' + mm + '/' + yyyy + suffix;
+  }
   // ----- mobile menu open/close (sửa logic để chỉ tác động top-level trên mobile)
   const hamburgerBtn = document.getElementById('hamburger');
   hamburgerBtn.addEventListener('click', function(){
@@ -579,444 +464,13 @@ window.onload = function () {
 // ----- Đóng menu khi click vào bất kỳ item nào (mobile) -----
 // Đóng menu chính khi click vào mục cuối cùng
 const menuEl = document.querySelector('#menu .menu');
-  // Đóng menu và reset bản đồ khi click nút con (mobile + desktop)
-// --- Helper: Update tiêu đề task panel ---
-  function updateTaskPanelTitle(selectedDate) {
-    if (!selectedDate) return;
-    const today = new Date(); today.setHours(0,0,0,0);
-    selectedDate.setHours(0,0,0,0);
-    const suffix = selectedDate > today ? ' (dự kiến)' : '';
-    const dd = String(selectedDate.getDate()).padStart(2,'0');
-    const mm = String(selectedDate.getMonth()+1).padStart(2,'0');
-    const yyyy = selectedDate.getFullYear();
-    document.getElementById('taskPanelTitle').textContent = 'Công việc ngày ' + dd + '/' + mm + '/' + yyyy + suffix;
-  }
-
-  // --- Top-level menu ---
-  document.querySelectorAll('#menu .menu > li > button').forEach(topBtn => {
-    topBtn.addEventListener('click', function() {
-      const li = this.parentElement;
-
-      // Mobile: toggle submenu
-      if (window.innerWidth <= 768) {
-        document.querySelectorAll('#menu .menu>li').forEach(item => {
-          if (item !== li) item.classList.remove('open');
-        });
-        li.classList.toggle('open');
-      }
-
-      // Top-level khác Cây trồng: reset pháp lý + show tổng thể
-      if (!this.textContent.includes('Cây trồng')) {
-        resetLegalView();
-        drawCrops('all');
-      }
-    });
-  });
-
-  // --- Submenu items ---
-  document.querySelectorAll('#menu .final-item').forEach(subBtn => {
-    subBtn.addEventListener('click', function() {
-      // Mobile: ẩn menu khi click item
-      if (window.innerWidth <= 768) {
-        menuEl.classList.remove('show');
-        hamburgerBtn.setAttribute('aria-expanded','false');
-      }
-
-      // Submenu cây trồng
-      if (this.dataset.crop) {
-        drawCrops(this.dataset.crop);
-      }
-      // Submenu công việc hàng ngày
-      if (this.id === 'dailyTaskBtn') {
-        const now = new Date();
-        const yyyy = now.getFullYear();
-        const mm = String(now.getMonth()+1).padStart(2,'0');
-        const dd = String(now.getDate()).padStart(2,'0');
-        taskDateInput.value = `${yyyy}-${mm}-${dd}`;
-        updateTaskPanelTitle(new Date(taskDateInput.value));
-        taskDateInput.onchange = () => { updateTaskPanelTitle(new Date(taskDateInput.value)); showTasks(); };
-        taskPanel.style.display = 'block';
-        showTasks();
-      }
-    });
-  });
-
-
-  // --- Close task panel ---
-  document.getElementById('closeTasksBtn').addEventListener('click', () => {
-    taskPanel.style.display = 'none';
-    clearHighlights();
-    taskListDiv.innerHTML = '';
-  });
-    const systemColors = {
-    "Tưới chính": "#FF0000",
-    "Tưới nhánh": "#1f77b4",
-    "Tưới nhánh 1": "#2ca02c",
-  };
-  const pebGroup = L.layerGroup();
-  
-  const allPipesGroup = L.featureGroup(); // ❗ KHÔNG .addTo(map) ở đây
-  const pipeGroups = {};
-  let irrigationVisible = false;   // trạng thái đang hiển thị hay không
-  let layerControl = null;
-  let legendControl = null;
-  const allPipesPlaceholder = L.layerGroup(); // rỗng
-    function updateLayerControl(show = true) {
-    if (layerControl) {
-      map.removeControl(layerControl);
-      layerControl = null;
-    }
-    if (!show) return;
-  
-    // overlays: placeholder cho "Tất cả ống" + từng nhóm thực tế
-    const overlays = { "Tất cả ống": allPipesPlaceholder };
-    Object.keys(pipeGroups).forEach(k => overlays[k] = pipeGroups[k]);
-  
-    layerControl = L.control.layers(null, overlays, { collapsed: false, position: 'bottomleft' }).addTo(map);
-  }
-  
-  // lắng nghe khi user tick/un-tick 1 overlay
-  map.on('overlayadd', function(e) {
-    // nếu user tick "Tất cả ống"
-    if (e.layer === allPipesPlaceholder) {
-      // bật tất cả nhóm con
-      Object.values(pipeGroups).forEach(g => { if (!map.hasLayer(g)) map.addLayer(g); });
-    } else {
-      // user tick 1 nhóm con => nếu bây giờ tất cả nhóm con đang bật, check placeholder
-      const allOn = Object.values(pipeGroups).every(g => map.hasLayer(g));
-      if (allOn && !map.hasLayer(allPipesPlaceholder)) map.addLayer(allPipesPlaceholder);
+document.querySelectorAll('#menu .final-item').forEach(link => {
+  link.addEventListener('click', function () {
+    if (window.innerWidth <= 768) {        // chỉ áp dụng trên mobile
+      menuEl.classList.remove('show');     // ẩn toàn bộ menu hamburger
+      hamburger.setAttribute('aria-expanded', 'false');
     }
   });
-  
-  map.on('overlayremove', function(e) {
-    // nếu user un-tick "Tất cả ống"
-    if (e.layer === allPipesPlaceholder) {
-      // tắt tất cả nhóm con
-      Object.values(pipeGroups).forEach(g => { if (map.hasLayer(g)) map.removeLayer(g); });
-    } else {
-      // user un-tick 1 nhóm con => chắc chắn placeholder phải uncheck
-      if (map.hasLayer(allPipesPlaceholder)) map.removeLayer(allPipesPlaceholder);
-    }
-  });
-
-  function updateLegend(show = true) {
-    if (legendControl) map.removeControl(legendControl);
-    legendControl = null;
-    if (!show) return;
-    legendControl = L.control({ position: 'bottomleft' });
-    legendControl.onAdd = function() {
-      const div = L.DomUtil.create('div', 'pipe-legend');
-      div.style.background = 'rgba(255,255,255,0.95)';
-      div.style.padding = '8px';
-      div.style.borderRadius = '6px';
-      div.style.boxShadow = '0 1px 4px rgba(0,0,0,0.2)';
-      let html = '<b>Chú giải ống</b><br/>';
-      Object.keys(systemColors).forEach(k => {
-        html += `<div style="display:flex;align-items:center;margin:4px 0;">
-                   <span style="width:24px;height:6px;display:inline-block;background:${systemColors[k]};margin-right:8px;border-radius:3px"></span>
-                   <span>${k}</span>
-                 </div>`;
-      });
-      html += `<div style="display:flex;align-items:center;margin:4px 0;">
-                    <span style="width:12px;height:12px;display:inline-block;background:red;margin-right:8px;border-radius:50%;border:1px solid #800"></span>
-                    <span>Đầu PEB tưới</span>
-                 </div>`;
-      html += `<div style="display:flex;align-items:center;margin:4px 0;">
-                    <span style="width:12px;height:12px;display:inline-block;background:blue;margin-right:8px;border-radius:50%;border:1px solid #004"></span>
-                    <span>Trạm bơm</span>
-                 </div>`;
-      div.innerHTML = html;
-      return div;
-    };
-    legendControl.addTo(map);
-  }
-  function hideLegendAndLayerControl() {
-    if (legendControl) map.removeControl(legendControl);
-    if (layerControl)  map.removeControl(layerControl);
-  }
-
-(function() {
-  const sheetUrl = "https://docs.google.com/spreadsheets/d/1-yfsz_JaKXEec14z3ng10q9UgA3BmVTntT5eUq1ItKo/gviz/tq?tqx=out:json";
-  const materialStyle = {
-    "u_PVC": { dashArray: null },
-    "Gang": { dashArray: "6,6" },
-    "Bê tông": { dashArray: "1,6" }
-  };
-
-  // Bật/tắt lớp tưới
-  function showIrrigation() {
-    if (!map.hasLayer(allPipesGroup)) {
-      map.addLayer(allPipesGroup);
-      map.addLayer(pebGroup);
-    }
-  }
-  function hideIrrigation() {
-    if (map.hasLayer(allPipesGroup)){
-      map.removeLayer(allPipesGroup);
-      map.removeLayer(pebGroup);
-    }
-  }
-
-  function parseGviz(text) {
-    const match = text.match(/google\.visualization\.Query\.setResponse\((.*)\);/s);
-    if (!match) throw new Error("Không parse được response gviz");
-    return JSON.parse(match[1]).table.rows;
-  }
-
-  function coordsToLatLngs(coordsStr) {
-    if (!coordsStr) return [];
-    let arr;
-    try {
-      arr = JSON.parse(coordsStr);
-    } catch (e) {
-      try {
-        const cleaned = coordsStr.replace(/'/g, '"');
-        arr = JSON.parse(cleaned);
-      } catch (err) {
-        console.error("Không parse được toado_polyline:", coordsStr);
-        return [];
-      }
-    }
-    return arr.map(pt => L.latLng(Number(pt[0]), Number(pt[1])));
-  }
-
-  function diameterToWeight(mm) {
-    const d = Number(mm) || 50;
-    if (d <= 100) return 2;
-    if (d <= 160) return 3;
-    if (d <= 250) return 4;
-    return 6;
-  }
-
-let panelsVisible = false;
-
-document.getElementById("btnTogglePanels").addEventListener("click", function() {
-  if (!panelsVisible) {
-    updateLegend(true);
-    updateLayerControl(true);
-    this.innerText = "📑 Ẩn bảng";
-    panelsVisible = true;
-  } else {
-    hideLegendAndLayerControl();
-    this.innerText = "📑 Hiện bảng";
-    panelsVisible = false;
-  }
-});
-
-
-function drawPipes(rows) {
-    allPipesGroup.clearLayers();
-    Object.values(pipeGroups).forEach(g => g.clearLayers());
-    irrigationGroup.clearLayers();   // xoá cũ
-    pebGroup.clearLayers();
-    rows.forEach(r => {
-      const cells = r.c || [];
-      const id_tuyen   = cells[0]?.v ?? "";
-      const he_thong   = cells[1]?.v ?? "Khác";
-      const loai_ong   = cells[2]?.v ?? "";
-      const duong_kinh_mm = cells[3]?.v ?? "";
-      const toado_polyline = cells[4]?.v ?? "";
-      const coords = coordsToLatLngs(toado_polyline);
-      const latlngs = coordsToLatLngs(toado_polyline);
-      if (!pipeGroups[he_thong]) {
-        pipeGroups[he_thong] = L.layerGroup();
-      }
-
-      const color = systemColors[he_thong] || "#333333";
-      const weight = diameterToWeight(duong_kinh_mm);
-      const dash = (materialStyle[loai_ong] && materialStyle[loai_ong].dashArray) || null;
-
-      const poly = L.polyline(latlngs, {
-          color,
-          weight,
-          dashArray: dash,
-          opacity: 1,
-          lineCap: 'round'
-      }).addTo(irrigationGroup);
-      const center = poly.getBounds().getCenter();
-      const tooltip = L.tooltip({
-              permanent:true,
-              direction:'center',
-              className:'pipe-label',
-              opacity:0   // ban đầu ẩn
-          })
-          .setContent(id_tuyen)
-          .setLatLng(poly.getBounds().getCenter());
-  
-          irrigationGroup.addLayer(tooltip);
-
-      const popupHtml = `
-        <b>${id_tuyen}</b><br/>
-        Hệ thống: ${he_thong}<br/>
-        Vật liệu ống: ${loai_ong || 'N/A'}<br/>
-        Đường kính: ${duong_kinh_mm ? duong_kinh_mm + ' mm' : 'N/A'}
-      `;
-      poly.bindPopup(popupHtml);
-      poly.addTo(pipeGroups[he_thong]);
-      poly.addTo(allPipesGroup);
-      // --- Vẽ chấm đỏ cho "Tưới nhánh 1" ---
-      if (he_thong === "Tưới nhánh 1") {
-          const chuyenHuongStr = cells[5]?.v ?? "";
-          const chuyenHuong = chuyenHuongStr
-              .split(",")
-              .map(s => parseInt(s.trim(), 10))
-              .filter(n => !isNaN(n));
-          const exclude = new Set([0, ...chuyenHuong]);
-          // Bỏ ký tự T đầu tiên, giữ nguyên phần còn lại
-          const idPart = id_tuyen.startsWith('T') ? id_tuyen.slice(1) : id_tuyen;
-          let stt = 1;  // đếm số thứ tự đầu peb trên tuyến
-        
-          coords.forEach((latlng, idx) => {
-              if (!exclude.has(idx)) {
-                  const marker = L.circleMarker(latlng, {
-                      radius: 6,
-                      color: '#ff0000',
-                      fillColor: '#ff0000',
-                      fillOpacity: 1,
-                      weight: 2
-                  }).addTo(pebGroup);
-                  // Tên đầu peb: "P." + (phần sau T) + "." + stt
-                  // Ví dụ: id_tuyen = "T01-1.8", stt = 2 → "P.01-1.8.2"
-                  const maPeb = `P.${idPart}.${stt}`;
-                      marker.bindTooltip(maPeb, {
-                      permanent: true,
-                      direction: 'center',
-                      className: 'peb-label',
-                      opacity: 0
-                  });
-          
-                  stt++;
-              }
-          });
-      }
-    });
-}
-    /* ✅ Chỉ thay đổi độ trong suốt tooltip khi zoom */
-  map.on('zoomend', updateLabelOpacity);
-
-  function updateLabelOpacity() {
-      const z = map.getZoom();
-      const showZoom = 17;
-  
-      // --- nhãn ống ---
-      irrigationGroup.eachLayer(function (layer) {
-          if (layer instanceof L.Tooltip) {
-              const el = layer.getElement && layer.getElement();
-              if (el) {
-                  el.style.opacity = (z >= showZoom && pipeLabelVisible) ? 1 : 0;
-              }
-          }
-      });
-  
-      // --- tên PEB ---
-      pebGroup.eachLayer(function(layer) {
-          layer.setStyle({ opacity: z >= showZoom ? 1 : 0,fillOpacity: z >= showZoom ? 1 : 0 });
-          const tt = layer.getTooltip && layer.getTooltip();
-          const el = tt && tt.getElement && tt.getElement();
-          if (el) {
-              el.style.opacity = (z >= showZoom && pebLabelVisible) ? 1 : 0;
-          }
-      });
-  }
-
-  // ❗ Chỉ nạp dữ liệu, KHÔNG tự add allPipesGroup
-  fetch(sheetUrl).then(r => r.text()).then(text => {
-    try {
-      const rows = parseGviz(text);
-      drawPipes(rows);
-    } catch (e) {
-      console.error("Lỗi khi xử lý sheet đường ống:", e);
-    }
-  }).catch(err => {
-    console.error("Lỗi fetch sheet đường ống:", err);
-  });
-
-  window.reloadPipesFromSheet = function(url) {
-    const u = url || sheetUrl;
-    fetch(u).then(r => r.text()).then(text => {
-      try {
-        const rows = parseGviz(text);
-        drawPipes(rows);
-      } catch (e) {
-        console.error("Lỗi parse reload:", e);
-      }
-    }).catch(err => console.error("Lỗi reload:", err));
-  };
-
-  // Xuất public cho menu khác dùng
-  window.showIrrigation = showIrrigation;
-  window.hideIrrigation = hideIrrigation;
-})();
-
-// Nút Hệ thống tưới: click mới bật
-// ⚠️ khai báo biến toàn cục
-
-
-document.getElementById('btnTogglePipeLabel').addEventListener('click', () => {
-    pipeLabelVisible = !pipeLabelVisible;
-    irrigationGroup.eachLayer(function(layer){
-        if (layer instanceof L.Tooltip) {
-            const el = layer.getElement && layer.getElement();
-            if (el) el.style.opacity = pipeLabelVisible ? 1 : 0;
-        }
-    });
-    document.getElementById('btnTogglePipeLabel').innerText =
-        pipeLabelVisible ? "Ẩn nhãn ống" : "Hiện nhãn ống";
-});
-
-document.getElementById('btnTogglePebLabel').addEventListener('click', () => {
-    pebLabelVisible = !pebLabelVisible;
-    pebGroup.eachLayer(function(layer){
-        if (layer.getTooltip) {
-            const tt = layer.getTooltip();
-            const el = tt && tt.getElement && tt.getElement();
-            if (el) el.style.opacity = pebLabelVisible ? 1 : 0;
-        }
-    });
-    document.getElementById('btnTogglePebLabel').innerText =
-        pebLabelVisible ? "Ẩn tên PEB" : "Hiện tên PEB";
-});
-
-
-document.getElementById('btnIrrigation').addEventListener('click', function () {
-    // Đóng menu mobile như cũ
-    if (window.innerWidth <= 768) {
-        menuEl.classList.remove('show');
-        hamburgerBtn.setAttribute('aria-expanded', 'false');
-    }
-
-    // Bật / tắt nhóm hệ thống tưới
-     showIrrigation();               // ← giữ nguyên hàm cũ của bạn
-     map.addLayer(irrigationGroup);  // bật toàn bộ layer ống + nhãn
-     updateLegend(false);     // bật chú giải ống
-     updateLayerControl(false); //bật quản lý hiển thị ống
-     if (allPipesGroup.getLayers().length > 0) {
-     const bounds = allPipesGroup.getBounds();
-     if (bounds.isValid()) map.fitBounds(bounds.pad(0.1));
-     document.getElementById('irrigationButtons').style.display = 'block';
-    }
-});
-
-
-// Các mục final-item khác: tắt hệ thống tưới
-// Khi click vào bất kỳ mục final-item KHÁC "Hệ thống tưới" => tắt nhóm ống tưới
-document.querySelectorAll('#menu .final-item:not(#btnIrrigation)').forEach(subBtn => {
-    subBtn.addEventListener('click', function () {
-
-        // 👉 Chỉ tắt nếu đang bật
-            map.removeLayer(irrigationGroup);   // ẩn toàn bộ tuyến ống + nhãn id_tuyen
-            updateLegend(false);        // ẩn chú giải ống
-            updateLayerControl(false);    // ẩn quản lý hiện thị ống
-            hideIrrigation();
-            irrigationVisible = false;          // cập nhật trạng thái
-            document.getElementById('irrigationButtons').style.display = 'none';
-
-        // Đóng menu mobile như cũ
-        if (window.innerWidth <= 768) {
-            menuEl.classList.remove('show');
-            hamburgerBtn.setAttribute('aria-expanded', 'false');
-        }
-    });
 });
 
 
@@ -1024,3 +478,20 @@ document.querySelectorAll('#menu .final-item:not(#btnIrrigation)').forEach(subBt
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
