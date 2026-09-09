@@ -255,7 +255,8 @@ window.onload = function () {
   let labelsVisible = false;
   let taskData = [];
   let highlightLayers = [];
-
+  let pipeLabelVisible = false;
+  let pebLabelVisible = false;
   const cropsByName = {};
   const actualByName = {};
   const legalByName = {};
@@ -277,8 +278,7 @@ window.onload = function () {
         enableHighAccuracy: true // bật GPS chính xác cao (nếu thiết bị hỗ trợ)
     }
   }).addTo(map);
-  let pipeLabelVisible = false;
-  let pebLabelVisible = false;
+
   const cropsGroup = L.layerGroup().addTo(map);
   const companyLegalGroup = L.layerGroup();
   const actualLotsGroup = L.layerGroup();
