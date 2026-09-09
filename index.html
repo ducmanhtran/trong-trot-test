@@ -173,10 +173,23 @@
 }
 
 .leaflet-control-layers.base-map-control .leaflet-control-layers-list {
-  min-width: 145px;
+  min-width: 150px;
 }
 
 .leaflet-control-layers.base-map-control > a {
+  width: 34px !important;
+  height: 34px !important;
+  line-height: 34px !important;
+}
+
+/* Nút định vị nằm thấp hơn nút lớp bản đồ, tránh chồng lên nhau. */
+.leaflet-control-locate {
+  margin-top: 55px !important;
+  margin-right: 10px !important;
+  z-index: 1090 !important;
+}
+
+.leaflet-control-locate a {
   width: 34px !important;
   height: 34px !important;
   line-height: 34px !important;
@@ -324,8 +337,7 @@ window.onload = function () {
     collapsed: true
   }).addTo(map);
 
-  // Đánh dấu riêng nút chuyển Bản đồ / Vệ tinh để CSS mobile
-  // không nhầm với bảng quản lý các tuyến ống tưới.
+  // Nút chọn nền bản đồ có class riêng để bố trí độc lập với nút định vị.
   baseControl.getContainer().classList.add('base-map-control');
 
   // Thông báo rõ nếu tile nền không tải được.
