@@ -177,9 +177,15 @@
 }
 
 .leaflet-control-layers.base-map-control > a {
-  width: 34px !important;
-  height: 34px !important;
-  line-height: 34px !important;
+  width: 30px !important;
+  height: 30px !important;
+  line-height: 30px !important;
+  background-size: 18px 18px !important;
+  border-radius: 5px !important;
+}
+
+.leaflet-control-layers.base-map-control .leaflet-control-layers-list {
+  padding: 6px 8px !important;
 }
 
 /* Nút định vị nằm thấp hơn nút lớp bản đồ, tránh chồng lên nhau. */
@@ -338,7 +344,18 @@ window.onload = function () {
   }).addTo(map);
 
   // Nút chọn nền bản đồ có class riêng để bố trí độc lập với nút định vị.
-  baseControl.getContainer().classList.add('base-map-control');
+  const baseControlEl = baseControl.getContainer();
+  baseControlEl.classList.add('base-map-control');
+
+  // Trên điện thoại: sau khi chọn Vệ tinh/Bản đồ/OSM thì tự thu bảng
+  // lựa chọn về đúng một biểu tượng nhỏ, tránh che nút định vị.
+  baseControlEl.addEventListener('change', function () {
+    if (window.innerWidth <= 768) {
+      setTimeout(function () {
+        baseControlEl.classList.remove('leaflet-control-layers-expanded');
+      }, 80);
+    }
+  });
 
   // Thông báo rõ nếu tile nền không tải được.
   const baseMapStatus = L.control({position: 'topleft'});
