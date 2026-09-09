@@ -61,7 +61,6 @@
 }
 /* ===== MAP + FOOTER ===== */
 #map{height:calc(100vh - 100px);width:100%;margin:0;padding:0}
-#baseMapStatus{z-index:2000 !important;}
 #footerTitle{position:fixed;bottom:0;left:0;width:100%;margin:0;padding:4px 6px;background:rgba(255,255,255,0.85);text-align:center;font-size:13px;box-shadow:0 -1px 4px rgba(0,0,0,0.15);z-index:1000}
 /* ===== LABEL & TOGGLE ===== */
 .custom-label{font-weight:200;font-size:13px;color:#000;text-align:center;white-space:nowrap}
@@ -192,7 +191,6 @@
       <ul class="submenu">
         <li><button data-crop="all" class="final-item" >🌍 Tổng thể</button></li>
         <li><button data-crop="Cỏ" class="final-item">🌱 Cỏ</button></li>
-        <li><button data-crop="Cỏ Mombasa" class="final-item">🌱 Cỏ Mombasa</button></li>
         <li><button data-crop="Ngô" class="final-item">🌽 Ngô</button></li>
         <li><button data-crop="Sắn" class="final-item">🥔 Sắn</button></li>
         <li><button data-crop="Đất trống" class="final-item">⬜ Đất trống</button></li>
@@ -257,10 +255,6 @@ window.onload = function () {
   let taskData = [];
   let highlightLayers = [];
 
-  // Trạng thái nhãn hệ thống tưới
-  let pipeLabelVisible = false;
-  let pebLabelVisible = false;
-
   const cropsByName = {};
   const actualByName = {};
   const legalByName = {};
@@ -269,112 +263,7 @@ window.onload = function () {
   // map + groups
   const map = L.map('map', { center: [17.5089721, 106.4670833], zoom: 13, zoomControl: false });
   L.control.zoom({ position: 'bottomright' }).addTo(map);
-  // ===== BẢN ĐỒ NỀN =====
-  // Dùng 1 domain OSM duy nhất trước, tránh lỗi DNS với a/b/c.tile.openstreetmap.org.
-  // Nếu nguồn 1 lỗi, tự thử CARTO rồi Esri.
-  const baseLayers = {};
-
-  const osmLayer = L.tileLayer(
-    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-    {
-      attribution: '&copy; OpenStreetMap contributors',
-      maxZoom: 19,
-      maxNativeZoom: 19
-    }
-  );
-
-  const cartoLayer = L.tileLayer(
-    'https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
-    {
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-      maxZoom: 20
-    }
-  );
-
-  const satelliteLayer = L.tileLayer(
-    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    {
-      attribution: 'Tiles &copy; Esri',
-      maxZoom: 20
-    }
-  );
-
-  baseLayers['🗺️ OpenStreetMap'] = osmLayer;
-  baseLayers['🗺️ CARTO'] = cartoLayer;
-  baseLayers['🛰️ Vệ tinh'] = satelliteLayer;
-
-  // Mặc định dùng OSM domain đơn.
-  osmLayer.addTo(map);
-
-  const baseControl = L.control.layers(baseLayers, null, {
-    position: 'topright',
-    collapsed: true
-  }).addTo(map);
-
-  // Thông báo rõ nếu tile nền không tải được.
-  const baseMapStatus = L.control({position: 'topleft'});
-  baseMapStatus.onAdd = function() {
-    const div = L.DomUtil.create('div');
-    div.id = 'baseMapStatus';
-    div.style.cssText =
-      'display:none;background:#fff;padding:7px 10px;border:1px solid #ccc;' +
-      'border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.25);' +
-      'font:13px Arial;max-width:320px;';
-    return div;
-  };
-  baseMapStatus.addTo(map);
-
-  let baseMapFallbackDone = false;
-
-  function showBaseMapError(message) {
-    const el = document.getElementById('baseMapStatus');
-    if (!el) return;
-    el.style.display = 'block';
-    el.innerHTML = message;
-  }
-
-  function hideBaseMapError() {
-    const el = document.getElementById('baseMapStatus');
-    if (el) el.style.display = 'none';
-  }
-
-  osmLayer.on('tileload', function() {
-    hideBaseMapError();
-  });
-
-  osmLayer.on('tileerror', function() {
-    if (!baseMapFallbackDone && map.hasLayer(osmLayer)) {
-      baseMapFallbackDone = true;
-      map.removeLayer(osmLayer);
-      cartoLayer.addTo(map);
-      showBaseMapError('Đang chuyển sang bản đồ dự phòng...');
-    }
-  });
-
-  cartoLayer.on('tileload', function() {
-    hideBaseMapError();
-  });
-
-  cartoLayer.on('tileerror', function() {
-    if (map.hasLayer(cartoLayer)) {
-      map.removeLayer(cartoLayer);
-      satelliteLayer.addTo(map);
-      showBaseMapError('Đang chuyển sang ảnh vệ tinh...');
-    }
-  });
-
-  satelliteLayer.on('tileload', function() {
-    hideBaseMapError();
-  });
-
-  satelliteLayer.on('tileerror', function() {
-    if (map.hasLayer(satelliteLayer)) {
-      showBaseMapError(
-        '⚠️ Máy tính không tải được bản đồ nền từ Internet.<br>' +
-        'Các lớp dữ liệu trang trại vẫn có thể hiển thị.'
-      );
-    }
-  });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
   L.control.locate({
     position: 'topright',        // vị trí nút trên bản đồ: 'topleft','topright','bottomleft','bottomright'
     strings: {
@@ -387,7 +276,8 @@ window.onload = function () {
         enableHighAccuracy: true // bật GPS chính xác cao (nếu thiết bị hỗ trợ)
     }
   }).addTo(map);
-
+  let pipeLabelVisible = false;
+  let pebLabelVisible = false;
   const cropsGroup = L.layerGroup().addTo(map);
   const companyLegalGroup = L.layerGroup();
   const actualLotsGroup = L.layerGroup();
@@ -485,13 +375,11 @@ window.onload = function () {
 
       if (filterCrop === 'all') {
         if (crop === 'Cỏ') fillColor = 'yellow';
-        else if (crop === 'Cỏ Mombasa') fillColor = 'blue';  
         else if (crop === 'Ngô') fillColor = 'orange';
         else if (crop === 'Sắn') fillColor = 'green';
         else if (crop === 'Đất trống') { fillColor = 'brown'; fillOpacity = 0.3; }
       } else {
         if (crop === 'Cỏ') { fillColor = 'yellow'; if (monthsElapsed >= 3) { color = 'red'; weight = 2; totalGrassArea += area; } fillOpacity = Math.min(1, monthsElapsed / 6); }
-        else if (crop === 'Cỏ Mombasa') { fillColor = 'blue';if (monthsElapsed >= 3) { color = 'red'; weight = 2; totalGrassArea += area; } fillOpacity = Math.min(1, monthsElapsed / 6); }
         else if (crop === 'Sắn') { fillColor = 'green'; if (monthsElapsed >= 10) { color = 'red'; weight = 2; totalCassavaArea += area; } fillOpacity = Math.min(1, monthsElapsed / 6 * 3 / 10); }
         else if (crop === 'Ngô') { fillColor = 'orange'; if (monthsElapsed >= 6) { color = 'red'; weight = 2; totalCornArea += area; } fillOpacity = Math.min(1, monthsElapsed / 6 * 3 / 6); }
         else if (crop === 'Đất trống') { fillColor = 'brown'; fillOpacity = 0.3; }
@@ -510,7 +398,6 @@ window.onload = function () {
 
     const box = document.getElementById('infoBox');
     if (filterCrop === 'Cỏ') { box.style.display = 'block'; box.innerText = `🌱 Cỏ đến hạn thu hoạch: ${totalGrassArea.toFixed(2)} ha`; }
-    else if (filterCrop === 'Cỏ Mombasa') { box.style.display = 'block'; box.innerText = `🌱 Cỏ Mombasa đến hạn thu hoạch: ${totalGrassArea.toFixed(2)} ha`; } 
     else if (filterCrop === 'Sắn') { box.style.display = 'block'; box.innerText = `🥔 Sắn đến hạn thu hoạch: ${totalCassavaArea.toFixed(2)} ha`; }
     else if (filterCrop === 'Ngô') { box.style.display = 'block'; box.innerText = `🌽 Ngô đến hạn thu hoạch: ${totalCornArea.toFixed(2)} ha`; }
     else { box.style.display = 'none'; }
