@@ -811,6 +811,7 @@ const menuEl = document.querySelector('#menu .menu');
     "Tưới chính": "#FF0000",
     "Tưới nhánh": "#1f77b4",
     "Tưới nhánh 1": "#2ca02c",
+    "Tưới nhánh 2": "#2ca02c",  
   };
   const pebGroup = L.layerGroup();
   
@@ -1014,7 +1015,7 @@ function drawPipes(rows) {
       poly.addTo(pipeGroups[he_thong]);
       poly.addTo(allPipesGroup);
       // --- Vẽ chấm đỏ cho "Tưới nhánh 1" ---
-      if (he_thong === "Tưới nhánh 1") {
+      if ((he_thong === "Tưới nhánh 1")||(he_thong === "Tưới nhánh 2"))  {
           const chuyenHuongStr = cells[5]?.v ?? "";
           const chuyenHuong = chuyenHuongStr
               .split(",")
